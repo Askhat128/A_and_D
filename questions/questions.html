@@ -1,190 +1,153 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RSVP на свадьбу</title>
+  <meta charset="UTF-8">
+  <title>RSVP</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: url('images/1.jpg') center/cover no-repeat fixed;
-      padding: 20px;
-      color: #333;
-    }
-
-    form {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .guest-block {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-    }
-
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-
-    select, input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
+    body { font-family: sans-serif; background: url('images/1.jpg') center/cover no-repeat; padding: 20px; }
+    form { background: rgba(255,255,255,0.9); padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; }
+    .hidden { display:none; }
+    .guest-block { margin-top:10px; border:1px solid #ccc; padding:10px; border-radius:8px; }
+    label { display:block; margin-top:10px; }
+    input, select { width:100%; padding:6px; box-sizing:border-box; margin-top:4px; }
+    button{ margin-top:20px; padding:10px; font-size:16px; }
   </style>
 </head>
 <body>
-  <form id="rsvp-form">
-    <h2>Просим подтвердить ваше участие:</h2>
+  <form id="rsvpForm">
+    <h2>1. Подтвердите участие:</h2>
+    <label><input type="radio" name="attendance" value="yes" required> Придем</label>
+    <label><input type="radio" name="attendance" value="no"> Не сможем</label>
 
-    <label>
-      <input type="radio" name="attendance" value="yes" required> Придем
-    </label>
-    <label>
-      <input type="radio" name="attendance" value="no"> Не сможем присутствовать
-    </label>
-
-    <div id="no-section" class="hidden">
-      <label>ФИО:
-        <input type="text" name="noFio" id="noFio" />
-      </label>
+    <div id="noSection" class="hidden">
+      <label>ФИО: <input type="text" name="noFio" id="noFio"></label>
       <p>Нам очень жаль, но спасибо за поздравление!</p>
     </div>
 
-    <div id="yes-section" class="hidden">
-      <label>Укажите количество гостей от семьи:</label>
-      <select id="guest-count">
-        <option value="">Выберите</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-      </select>
-
-      <div id="guest-fields"></div>
+    <div id="yesSection" class="hidden">
+      <label>2. Количество гостей:
+        <select id="guestCount">
+          <option value="">Выберите</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </label>
+      <div id="guestsContainer"></div>
     </div>
 
-    <label>Откуда вы к нам приедете?
-      <input type="text" name="origin" id="origin" />
+    <label>4. Откуда приедете?
+      <input type="text" name="origin" id="origin" required>
     </label>
 
-    <button type="submit" id="submit-btn" disabled>Отправить</button>
+    <button type="submit" id="submitBtn" disabled>Отправить</button>
     <p id="status"></p>
   </form>
 
-  <script>
-    const form = document.getElementById('rsvp-form');
-    const attendanceInputs = form.querySelectorAll('input[name="attendance"]');
-    const noSection = document.getElementById('no-section');
-    const yesSection = document.getElementById('yes-section');
-    const guestCountSelect = document.getElementById('guest-count');
-    const guestFields = document.getElementById('guest-fields');
-    const submitBtn = document.getElementById('submit-btn');
-    const statusText = document.getElementById('status');
+<script>
+  const form = document.getElementById('rsvpForm');
+  const noSection = document.getElementById('noSection');
+  const yesSection = document.getElementById('yesSection');
+  const guestCount = document.getElementById('guestCount');
+  const guestsContainer = document.getElementById('guestsContainer');
+  const submitBtn = document.getElementById('submitBtn');
+  const status = document.getElementById('status');
+  let attendance = '';
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbz6iGCWwabSV4seo0whwQmiVTAYqIoDA9bQmd-0fIFZE1rk2I_8XXCixYHc0OkCn-8/exec"; // ← Вставь сюда URL из Apps Script
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzubPmFw_MwtfOByDKnlLX1ZVUgOIf9lI4-X4EqnOHV32Nnha3rPKyWfWaSTkGrVBea/exec"; // Вставь сюда свой URL
 
-    let attendance = "";
-
-    attendanceInputs.forEach(input => {
-      input.addEventListener('change', () => {
-        attendance = input.value;
-        if (attendance === 'no') {
-          noSection.classList.remove('hidden');
-          yesSection.classList.add('hidden');
-          submitBtn.disabled = false;
-        } else {
-          noSection.classList.add('hidden');
-          yesSection.classList.remove('hidden');
-          submitBtn.disabled = true;
-        }
-      });
-    });
-
-    guestCountSelect.addEventListener('change', () => {
-      guestFields.innerHTML = "";
-      const count = parseInt(guestCountSelect.value);
-      if (!isNaN(count)) {
-        for (let i = 1; i <= count; i++) {
-          const block = document.createElement('div');
-          block.className = 'guest-block';
-          block.innerHTML = `
-            <label>ФИО гостя ${i}:
-              <input type="text" name="guest-fio-${i}" required />
-            </label>
-            <label>Какой алкоголь вы предпочитаете?
-              <select name="guest-alcohol-${i}">
-                <option value="Красное вино">Красное вино</option>
-                <option value="Белое вино">Белое вино</option>
-                <option value="Самогон">Самогон</option>
-                <option value="Не пью алкоголь">Не пью алкоголь</option>
-              </select>
-            </label>
-            <label>Есть ли у вас аллергия на какую-то еду?
-              <input type="text" name="guest-allergy-${i}" />
-            </label>
-          `;
-          guestFields.appendChild(block);
-        }
+  form.querySelectorAll('input[name="attendance"]').forEach(inp => {
+    inp.addEventListener('change', () => {
+      attendance = inp.value;
+      if (attendance === 'no') {
+        noSection.classList.remove('hidden');
+        yesSection.classList.add('hidden');
         submitBtn.disabled = false;
       } else {
+        noSection.classList.add('hidden');
+        yesSection.classList.remove('hidden');
         submitBtn.disabled = true;
       }
     });
+  });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  guestCount.addEventListener('change', () => {
+    guestsContainer.innerHTML = '';
+    const count = parseInt(guestCount.value);
+    if (count > 0) {
+      for (let i = 1; i <= count; i++) {
+        const div = document.createElement('div');
+        div.className = 'guest-block';
+        div.innerHTML = `
+          <label>ФИО гостя ${i}: <input type="text" name="guestFio${i}" required></label>
+          <label>Алкоголь: 
+            <select name="guestAlcohol${i}" required>
+              <option value="">Выберите</option>
+              <option>Красное вино</option>
+              <option>Белое вино</option>
+              <option>Самогон</option>
+              <option>Не пью алкоголь</option>
+            </select>
+          </label>
+          <label>Аллергия: <input type="text" name="guestAllergy${i}"></label>
+        `;
+        guestsContainer.appendChild(div);
+      }
+      submitBtn.disabled = false;
+    } else {
       submitBtn.disabled = true;
+    }
+  });
 
-      const data = {
-        attendance,
-        origin: document.getElementById('origin').value
-      };
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    status.textContent = 'Отправка...';
 
-      if (attendance === 'no') {
-        data.noFio = document.getElementById('noFio').value;
-      } else if (attendance === 'yes') {
-        const count = parseInt(guestCountSelect.value);
-        data.guests = [];
-        for (let i = 1; i <= count; i++) {
-          const fio = form.querySelector(`[name="guest-fio-${i}"]`).value;
-          const alcohol = form.querySelector(`[name="guest-alcohol-${i}"]`).value;
-          const allergy = form.querySelector(`[name="guest-allergy-${i}"]`).value;
-          data.guests.push({ fio, alcohol, allergy });
-        }
+    const origin = document.getElementById('origin').value.trim();
+    if (!origin) { alert('Укажите, откуда вы приедете'); submitBtn.disabled=false; return; }
+
+    const data = { attendance, origin };
+    if (attendance === 'no') {
+      const noFio = document.getElementById('noFio').value.trim();
+      if (!noFio) { alert('Введите ФИО'); submitBtn.disabled=false; return; }
+      data.noFio = noFio;
+    } else {
+      const guests = [];
+      for (let i = 1; i <= parseInt(guestCount.value); i++) {
+        const fio = form.querySelector(`[name="guestFio${i}"]`).value.trim();
+        const alcohol = form.querySelector(`[name="guestAlcohol${i}"]`).value;
+        const allergy = form.querySelector(`[name="guestAllergy${i}"]`).value.trim();
+        if (!fio || !alcohol) { alert('Заполните ФИО и алкоголь'); submitBtn.disabled=false; return; }
+        guests.push({ fio, alcohol, allergy });
       }
+      data.guests = guests;
+    }
 
-      try {
-        const res = await fetch(scriptURL, {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: { 'Content-Type': 'application/json' }
-        });
-        const result = await res.json();
-        statusText.textContent = result.result === 'success' ? 'Данные успешно отправлены!' : 'Ошибка при отправке.';
-      } catch (err) {
-        statusText.textContent = 'Ошибка соединения.';
-        console.error(err);
+    try {
+      const resp = await fetch(scriptURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const res = await resp.json();
+      if (res.result === 'success') {
+        status.textContent = 'Спасибо, данные отправлены!';
+        form.reset();
+        noSection.classList.add('hidden');
+        yesSection.classList.add('hidden');
+        guestsContainer.innerHTML = '';
+      } else {
+        status.textContent = 'Ошибка: ' + (res.message || 'неизвестная');
       }
-    });
-  </script>
+    } catch (err) {
+      status.textContent = 'Ошибка соединения';
+      console.error(err);
+    }
+  });
+</script>
 </body>
 </html>
