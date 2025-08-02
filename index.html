@@ -1,60 +1,48 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      margin: 0;
-      background: #000;
-    }
-
-    .slide {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      overflow: hidden;
+      background-color: #f0f0f0;
     }
 
-    .slide img {
+    img {
+      object-fit: cover;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      display: block;
     }
 
-    /* === Мобильные устройства === */
+    /* По умолчанию — для компьютеров */
+    img {
+      height: 100vh;
+      width: auto;
+    }
+
+    /* Для телефонов (ширина экрана до 768px) */
     @media (max-width: 768px) {
-      .slide {
+      img {
+        width: 100vw;
         height: auto;
-        padding: 10px 0;
-      }
-      .slide img {
-        width: 100vw;   /* на всю ширину экрана */
-        height: auto;   /* высота автоматически */
-        object-fit: contain;
-      }
-    }
-
-    /* === Компьютеры и планшеты === */
-    @media (min-width: 769px) {
-      .slide {
-        height: 100vh;  /* на всю высоту экрана */
-      }
-      .slide img {
-        max-height: 100vh;
-        width: auto;
-        object-fit: contain;
       }
     }
   </style>
 </head>
 <body>
-  <div class="slide"><img src="images/1.jpg" alt="Строительство дома"></div>
-  <div class="slide"><img src="images/2.jpg" alt="Строительство дома"></div>
-  <div class="slide"><img src="images/3.jpg" alt="Строительство дома"></div>
-  <div class="slide"><img src="images/4.jpg" alt="Строительство дома"></div>
-  <div class="slide"><img src="images/5.jpg" alt="Строительство дома"></div>
+  <img src="images/1.jpg" alt="Строительство дома">
+  <img src="images/2.jpg" alt="Строительство дома">
+  <img src="images/3.jpg" alt="Строительство дома">
+  <img src="images/4.jpg" alt="Строительство дома">
+  <img src="images/5.jpg" alt="Строительство дома">
 </body>
 </html>
