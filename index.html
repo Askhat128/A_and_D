@@ -5,27 +5,22 @@
   <title>Ах, эта свадьба!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <style>
-    html {
-      -webkit-text-size-adjust: 100%;
-      -ms-text-size-adjust: 100%;
-      text-size-adjust: 100%;
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #000;
+      font-family: sans-serif;
+      overflow-x: hidden;
     }
 
     * {
       box-sizing: border-box;
     }
 
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background-color: #000;
-      overflow-x: hidden;
-      height: 100vh;
-    }
-
     .slider-container {
       position: relative;
-      width: 100%;
+      width: 100vw;
       height: 100vh;
       overflow: hidden;
       background-color: #000;
@@ -33,9 +28,8 @@
 
     .slide {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
+      top: 0; left: 0;
+      width: 100vw;
       height: 100vh;
       opacity: 0;
       transition: opacity 1s ease-in-out;
@@ -51,30 +45,28 @@
       z-index: 1;
     }
 
-    /* Контейнер с картинкой и кнопкой */
     .image-wrapper {
       position: relative;
-      width: 100%;
-      max-height: 100vh;
-      display: block;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
     }
 
     .image-wrapper img {
-      display: block;
-      width: 100%;
-      height: auto;
+      width: 100vw;
+      height: 100vh;
       object-fit: contain;
+      display: block;
       user-select: none;
       pointer-events: none;
     }
 
-    /* Кнопка поверх нижней части картинки */
     .start-button {
       position: absolute;
-      bottom: 10px; /* Отступ от нижнего края картинки */
+      bottom: 10px;
       left: 50%;
       transform: translateX(-50%);
-      max-width: 90%;
+      max-width: 90vw;
       padding: 15px 40px;
       font-size: 28px;
       border-radius: 48px;
@@ -87,13 +79,14 @@
       transition: background-color 0.3s;
       user-select: none;
       z-index: 5;
+      overflow-wrap: break-word;
+      text-align: center;
     }
 
     .start-button:hover {
       background-color: #eee;
     }
 
-    /* Навигационные кнопки */
     .nav-button {
       position: absolute;
       top: 50%;
@@ -127,7 +120,6 @@
       right: 30px;
     }
 
-    /* Кнопка подтверждения на последнем слайде */
     .image-button {
       position: absolute;
       bottom: 100px;
@@ -149,26 +141,24 @@
       z-index: 3;
       transition: background-color 0.3s;
       user-select: none;
-      max-width: 90%;
+      max-width: 90vw;
+      overflow-wrap: break-word;
     }
 
     .image-button:hover {
       background-color: #bbb;
     }
 
-    /* По умолчанию скрываем навигацию и кнопки */
     .nav-button,
     .image-button {
       display: none;
     }
 
-    /* Показываем только для активного слайда */
     .slide.active .nav-button,
     .slide.active .image-button {
       display: block;
     }
 
-    /* Адаптивность для маленьких экранов */
     @media (max-width: 768px) {
       .nav-button {
         width: 60px;
@@ -180,13 +170,11 @@
       .start-button {
         font-size: 24px;
         padding: 12px 30px;
-        max-width: 90%;
       }
 
       .image-button {
         font-size: 24px;
         padding: 12px 40px;
-        max-width: 90%;
         bottom: 60px;
       }
     }
@@ -202,13 +190,11 @@
       .start-button {
         font-size: 18px;
         padding: 10px 20px;
-        max-width: 90%;
       }
 
       .image-button {
         font-size: 18px;
         padding: 10px 25px;
-        max-width: 90%;
         bottom: 40px;
       }
     }
@@ -227,28 +213,36 @@
 
     <!-- Слайд 2 -->
     <div class="slide">
-      <img src="images/2.jpg" alt="Ах, эта свадьба!" />
+      <div class="image-wrapper">
+        <img src="images/2.jpg" alt="Ах, эта свадьба!" />
+      </div>
       <button class="nav-button nav-left" onclick="prevSlide()">←</button>
       <button class="nav-button nav-right" onclick="nextSlide()">→</button>
     </div>
 
     <!-- Слайд 3 -->
     <div class="slide">
-      <img src="images/3.jpg" alt="Ах, эта свадьба!" />
+      <div class="image-wrapper">
+        <img src="images/3.jpg" alt="Ах, эта свадьба!" />
+      </div>
       <button class="nav-button nav-left" onclick="prevSlide()">←</button>
       <button class="nav-button nav-right" onclick="nextSlide()">→</button>
     </div>
 
     <!-- Слайд 4 -->
     <div class="slide">
-      <img src="images/4.jpg" alt="Ах, эта свадьба!" />
+      <div class="image-wrapper">
+        <img src="images/4.jpg" alt="Ах, эта свадьба!" />
+      </div>
       <button class="nav-button nav-left" onclick="prevSlide()">←</button>
       <button class="nav-button nav-right" onclick="nextSlide()">→</button>
     </div>
 
     <!-- Слайд 5 -->
     <div class="slide">
-      <img src="images/5.jpg" alt="Ах, эта свадьба!" />
+      <div class="image-wrapper">
+        <img src="images/5.jpg" alt="Ах, эта свадьба!" />
+      </div>
       <button class="nav-button nav-left" onclick="prevSlide()">←</button>
       <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">ПОДТВЕРДИТЬ</button>
     </div>
@@ -266,13 +260,11 @@
     }
 
     function nextSlide() {
-      const next = (currentSlide + 1) % slides.length;
-      showSlide(next);
+      showSlide((currentSlide + 1) % slides.length);
     }
 
     function prevSlide() {
-      const prev = (currentSlide - 1 + slides.length) % slides.length;
-      showSlide(prev);
+      showSlide((currentSlide - 1 + slides.length) % slides.length);
     }
 
     function goToSlide(index) {
