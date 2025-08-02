@@ -2,35 +2,29 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Свадебный сайт</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-  <!-- Подключаем красивый шрифт Neucha -->
+  <title>Ах, эта свадьба!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
-
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: 'Neucha', cursive;
-      overflow-x: hidden;
+      overflow: auto;
       scroll-behavior: smooth;
+      font-family: 'Neucha', cursive;
       background-color: #000;
     }
 
     .slider-container {
-      height: 100%;
-      overflow-y: scroll;
+      width: 100vw;
+      height: auto;
     }
 
     .slide {
       width: 100vw;
-      height: 100vh;
+      height: 100dvh;
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
     .image-wrapper {
@@ -41,8 +35,27 @@
     .image-wrapper img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       display: block;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .countdown-container {
+      position: absolute;
+      bottom: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: black;
+      font-size: 24px;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .countdown-time {
+      font-size: 26px;
+      margin-top: 5px;
     }
 
     .image-button {
@@ -55,42 +68,31 @@
       border: none;
       border-radius: 64px;
       font-size: 24px;
-      padding: 14px 36px;
-      font-family: 'Neucha', cursive;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      max-width: 80vw;
-      z-index: 3;
-    }
-
-    .countdown-wrapper {
-      position: absolute;
-      bottom: 180px; /* расстояние выше кнопки x2 */
-      left: 50%;
-      transform: translateX(-50%);
+      font-weight: bold;
+      padding: 12px 40px;
       text-align: center;
-      color: black;
+      cursor: pointer;
       font-family: 'Neucha', cursive;
-      font-size: clamp(16px, 4vw, 22px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 3;
+      user-select: none;
       white-space: nowrap;
-      z-index: 2;
     }
 
-    .countdown-title {
-      margin-bottom: 6px;
+    .image-button:hover {
+      background-color: #bbb;
     }
 
-    @media (max-width: 500px) {
+    @media (max-width: 400px) {
+      .countdown-container {
+        font-size: 18px;
+      }
+      .countdown-time {
+        font-size: 20px;
+      }
       .image-button {
         font-size: 18px;
-        padding: 12px 28px;
-        bottom: 40px;
-      }
-
-      .countdown-wrapper {
-        bottom: 140px;
-        font-size: 16px;
+        padding: 10px 25px;
       }
     }
   </style>
@@ -99,54 +101,38 @@
 
   <div class="slider-container">
     <!-- Слайды -->
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/1.jpg" alt="Slide 1" />
-      </div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/2.jpg" alt="Slide 2" />
-      </div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/3.jpg" alt="Slide 3" />
-      </div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/4.jpg" alt="Slide 4" />
-      </div>
-    </div>
+    <div class="slide"><div class="image-wrapper"><img src="images/1.jpg" alt="Слайд 1" /></div></div>
+    <div class="slide"><div class="image-wrapper"><img src="images/2.jpg" alt="Слайд 2" /></div></div>
+    <div class="slide"><div class="image-wrapper"><img src="images/3.jpg" alt="Слайд 3" /></div></div>
+    <div class="slide"><div class="image-wrapper"><img src="images/4.jpg" alt="Слайд 4" /></div></div>
 
-    <!-- Последний слайд с кнопкой и отсчётом -->
+    <!-- Последний слайд -->
     <div class="slide">
       <div class="image-wrapper">
-        <img src="images/5.jpg" alt="Slide 5" />
+        <img src="images/5.jpg" alt="Слайд 5" />
       </div>
 
       <!-- Таймер -->
-      <div class="countdown-wrapper">
-        <div class="countdown-title">До нашей свадьбы осталось:</div>
-        <div id="countdown-timer">00д 00ч 00м 00с</div>
+      <div class="countdown-container">
+        До нашей свадьбы осталось:
+        <div class="countdown-time" id="timer">Загрузка...</div>
       </div>
 
       <!-- Кнопка -->
-      <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">
-        ПОДТВЕРДИТЬ
-      </button>
+      <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">ПОДТВЕРДИТЬ</button>
     </div>
   </div>
 
   <script>
-    function updateCountdown() {
-      const weddingDate = new Date("2025-09-20T16:00:00+07:00");
+    const timerEl = document.getElementById("timer");
+    const weddingDate = new Date("2025-09-20T16:00:00+07:00");
+
+    function updateTimer() {
       const now = new Date();
       const diff = weddingDate - now;
 
       if (diff <= 0) {
-        document.getElementById('countdown-timer').textContent = "00д 00ч 00м 00с";
+        timerEl.textContent = "Свадьба уже началась!";
         return;
       }
 
@@ -155,12 +141,11 @@
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
 
-      document.getElementById('countdown-timer').textContent =
-        `${days}д ${hours.toString().padStart(2, '0')}ч ${minutes.toString().padStart(2, '0')}м ${seconds.toString().padStart(2, '0')}с`;
+      timerEl.textContent = `${days} дн. ${hours} ч. ${minutes} мин. ${seconds} сек.`;
     }
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+    updateTimer();
+    setInterval(updateTimer, 1000);
   </script>
 
 </body>
