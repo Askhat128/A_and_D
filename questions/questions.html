@@ -1,72 +1,76 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>RSVP Форма</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSVP на свадьбу</title>
   <style>
     body {
-      background: #f8f8f8;
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
+      background: url('images/1.jpg') center/cover no-repeat fixed;
       padding: 20px;
+      color: #333;
     }
 
     form {
-      background: #fff;
+      background: rgba(255, 255, 255, 0.9);
       padding: 20px;
       border-radius: 12px;
       max-width: 600px;
       margin: auto;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .guest-block {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
     }
 
     label {
       display: block;
-      margin-top: 15px;
+      margin-top: 10px;
     }
 
-    input[type="text"], select {
+    select, input[type="text"], input[type="number"] {
       width: 100%;
       padding: 8px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      margin-top: 4px;
     }
 
     button {
       margin-top: 20px;
-      padding: 12px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
+      padding: 10px 20px;
       font-size: 16px;
-    }
-
-    .guest-block {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px dashed #ccc;
-      border-radius: 6px;
     }
   </style>
 </head>
 <body>
+  <form id="rsvp-form">
+    <h2>Просим подтвердить ваше участие:</h2>
 
-  <form action="https://formspree.io/f/xdkdlejr" method="POST" id="rsvp-form">
-    <h2>Подтверждение участия</h2>
+    <label>
+      <input type="radio" name="attendance" value="yes" required> Придем
+    </label>
+    <label>
+      <input type="radio" name="attendance" value="no"> Не сможем присутствовать
+    </label>
 
-    <!-- Вопрос 1 -->
-    <label>1. Просим подтвердить ваше участие:</label>
-    <label><input type="radio" name="участие" value="Придем" required> Придем</label>
-    <label><input type="radio" name="участие" value="Не сможем присутствовать"> Не сможем присутствовать</label>
+    <div id="no-section" class="hidden">
+      <label>ФИО:
+        <input type="text" name="noFio" id="noFio" />
+      </label>
+      <p>Нам очень жаль, но спасибо за поздравление!</p>
+    </div>
 
-    <!-- Блок: Кол-во гостей -->
-    <div id="guest-number-block">
-      <label>2. Укажите количество гостей от семьи:</label>
-      <select name="количество_гостей" id="guest-count">
-        <option value="" disabled selected>Выберите количество</option>
+    <div id="yes-section" class="hidden">
+      <label>Укажите количество гостей от семьи:</label>
+      <select id="guest-count">
+        <option value="">Выберите</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -74,101 +78,113 @@
         <option value="5">5</option>
         <option value="6">6</option>
       </select>
+
+      <div id="guest-fields"></div>
     </div>
 
-    <!-- Контейнер для гостей -->
-    <div id="guest-container"></div>
+    <label>Откуда вы к нам приедете?
+      <input type="text" name="origin" id="origin" />
+    </label>
 
-    <!-- Вопрос 5 -->
-    <div id="allergy-block">
-      <label>5. Есть ли у вас аллергия на какую-то еду?</label>
-      <input type="text" name="аллергия">
-    </div>
-
-    <!-- Вопрос 6 -->
-    <div id="city-block">
-      <label>6. Откуда вы к нам приедете?</label>
-      <input type="text" name="откуда" id="city-input">
-    </div>
-
-    <!-- Кнопка -->
-    <button type="submit">Отправить</button>
+    <button type="submit" id="submit-btn" disabled>Отправить</button>
+    <p id="status"></p>
   </form>
 
   <script>
     const form = document.getElementById('rsvp-form');
+    const attendanceInputs = form.querySelectorAll('input[name="attendance"]');
+    const noSection = document.getElementById('no-section');
+    const yesSection = document.getElementById('yes-section');
     const guestCountSelect = document.getElementById('guest-count');
-    const guestContainer = document.getElementById('guest-container');
-    const radioInputs = document.querySelectorAll('input[name="участие"]');
-    const guestBlock = document.getElementById('guest-number-block');
-    const allergyBlock = document.getElementById('allergy-block');
-    const cityBlock = document.getElementById('city-block');
-    const cityInput = document.getElementById('city-input');
+    const guestFields = document.getElementById('guest-fields');
+    const submitBtn = document.getElementById('submit-btn');
+    const statusText = document.getElementById('status');
 
-    function createGuestBlocks(count) {
-      guestContainer.innerHTML = '';
-      for (let i = 1; i <= count; i++) {
-        const block = document.createElement('div');
-        block.className = 'guest-block';
-        block.innerHTML = `
-          <label>Гость ${i}: ФИО</label>
-          <input type="text" name="ФИО_гостя_${i}" required>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbz6iGCWwabSV4seo0whwQmiVTAYqIoDA9bQmd-0fIFZE1rk2I_8XXCixYHc0OkCn-8/exec"; // ← Вставь сюда URL из Apps Script
 
-          <label>Предпочтение в алкоголе</label>
-          <select name="алкоголь_${i}" required>
-            <option value="" disabled selected>Выберите</option>
-            <option value="Красное вино">Красное вино</option>
-            <option value="Белое вино">Белое вино</option>
-            <option value="Самогон">Самогон</option>
-            <option value="Не пью алкоголь">Не пью алкоголь</option>
-          </select>
-        `;
-        guestContainer.appendChild(block);
-      }
-    }
+    let attendance = "";
 
-    guestCountSelect.addEventListener('change', () => {
-      const count = parseInt(guestCountSelect.value);
-      createGuestBlocks(count);
-    });
-
-    radioInputs.forEach(radio => {
-      radio.addEventListener('change', () => {
-        const value = radio.value;
-
-        if (value === "Придем") {
-          guestBlock.style.display = "block";
-          allergyBlock.style.display = "block";
-          cityBlock.style.display = "block";
-          cityInput.required = true;
-          guestCountSelect.required = true;
-
-          const count = parseInt(guestCountSelect.value);
-          if (count) {
-            createGuestBlocks(count);
-          }
-
+    attendanceInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        attendance = input.value;
+        if (attendance === 'no') {
+          noSection.classList.remove('hidden');
+          yesSection.classList.add('hidden');
+          submitBtn.disabled = false;
         } else {
-          // "Не сможем присутствовать"
-          guestBlock.style.display = "none";
-          allergyBlock.style.display = "none";
-          cityBlock.style.display = "none";
-          cityInput.required = false;
-          guestCountSelect.required = false;
-          guestContainer.innerHTML = '';
-
-          // Добавляем 1 поле ФИО
-          const block = document.createElement('div');
-          block.className = 'guest-block';
-          block.innerHTML = `
-            <label>Пожалуйста, укажите ваше ФИО:</label>
-            <input type="text" name="ФИО_отказ" required>
-          `;
-          guestContainer.appendChild(block);
+          noSection.classList.add('hidden');
+          yesSection.classList.remove('hidden');
+          submitBtn.disabled = true;
         }
       });
     });
-  </script>
 
+    guestCountSelect.addEventListener('change', () => {
+      guestFields.innerHTML = "";
+      const count = parseInt(guestCountSelect.value);
+      if (!isNaN(count)) {
+        for (let i = 1; i <= count; i++) {
+          const block = document.createElement('div');
+          block.className = 'guest-block';
+          block.innerHTML = `
+            <label>ФИО гостя ${i}:
+              <input type="text" name="guest-fio-${i}" required />
+            </label>
+            <label>Какой алкоголь вы предпочитаете?
+              <select name="guest-alcohol-${i}">
+                <option value="Красное вино">Красное вино</option>
+                <option value="Белое вино">Белое вино</option>
+                <option value="Самогон">Самогон</option>
+                <option value="Не пью алкоголь">Не пью алкоголь</option>
+              </select>
+            </label>
+            <label>Есть ли у вас аллергия на какую-то еду?
+              <input type="text" name="guest-allergy-${i}" />
+            </label>
+          `;
+          guestFields.appendChild(block);
+        }
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+
+      const data = {
+        attendance,
+        origin: document.getElementById('origin').value
+      };
+
+      if (attendance === 'no') {
+        data.noFio = document.getElementById('noFio').value;
+      } else if (attendance === 'yes') {
+        const count = parseInt(guestCountSelect.value);
+        data.guests = [];
+        for (let i = 1; i <= count; i++) {
+          const fio = form.querySelector(`[name="guest-fio-${i}"]`).value;
+          const alcohol = form.querySelector(`[name="guest-alcohol-${i}"]`).value;
+          const allergy = form.querySelector(`[name="guest-allergy-${i}"]`).value;
+          data.guests.push({ fio, alcohol, allergy });
+        }
+      }
+
+      try {
+        const res = await fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const result = await res.json();
+        statusText.textContent = result.result === 'success' ? 'Данные успешно отправлены!' : 'Ошибка при отправке.';
+      } catch (err) {
+        statusText.textContent = 'Ошибка соединения.';
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>
