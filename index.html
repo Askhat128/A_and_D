@@ -3,23 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <title>Ах, эта свадьба!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  
+  <!-- Красивые шрифты -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Poppins:wght@500&display=swap" rel="stylesheet">
+
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
       background-color: #000;
       font-family: sans-serif;
       overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     .slider-container {
-      width: 100%;
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
     }
 
     .slide {
       width: 100vw;
       height: 100vh;
+      scroll-snap-align: start;
       position: relative;
       display: flex;
       justify-content: center;
@@ -27,7 +40,12 @@
       background-color: #000;
     }
 
-    .slide img {
+    .image-wrapper {
+      width: 100%;
+      height: 100%;
+    }
+
+    .image-wrapper img {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -38,23 +56,25 @@
 
     .image-button {
       position: absolute;
-      bottom: 5vh;
+      bottom: 60px;
       left: 50%;
       transform: translateX(-50%);
       background-color: #ccc;
       color: black;
       border: none;
       border-radius: 64px;
-      font-size: clamp(16px, 5vw, 24px);
-      font-weight: bold;
-      padding: 12px 36px;
+      font-size: 24px;
+      font-weight: 500;
+      padding: 14px 36px;
       text-align: center;
+      text-decoration: none;
       cursor: pointer;
+      font-family: 'Poppins', sans-serif;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      z-index: 2;
-      transition: background-color 0.3s;
-      user-select: none;
       white-space: nowrap;
+      z-index: 3;
+      user-select: none;
+      max-width: 80vw;
     }
 
     .image-button:hover {
@@ -63,46 +83,81 @@
 
     .countdown-wrapper {
       position: absolute;
-      bottom: 18vh; /* поднял выше кнопки */
+      bottom: 140px; /* расстояние выше кнопки */
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
       color: black;
-      font-size: clamp(14px, 4vw, 22px);
-      font-weight: normal;
+      font-size: clamp(12px, 4vw, 20px);
+      font-weight: 500;
       z-index: 2;
+      white-space: nowrap;
+      font-family: 'Playfair Display', serif;
     }
 
     .countdown-title {
       margin-bottom: 6px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    @media (max-width: 400px) {
+      .image-button {
+        font-size: 18px;
+        padding: 12px 28px;
+        bottom: 40px;
+      }
+
+      .countdown-wrapper {
+        bottom: 120px;
+        font-size: 16px;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="slider-container">
+    <!-- Слайд 1 -->
     <div class="slide">
-      <img src="images/1.jpg" alt="Слайд 1">
+      <div class="image-wrapper">
+        <img src="images/1.jpg" alt="Ах, эта свадьба!" />
+      </div>
     </div>
-    <div class="slide">
-      <img src="images/2.jpg" alt="Слайд 2">
-    </div>
-    <div class="slide">
-      <img src="images/3.jpg" alt="Слайд 3">
-    </div>
-    <div class="slide">
-      <img src="images/4.jpg" alt="Слайд 4">
-    </div>
-    <div class="slide">
-      <img src="images/5.jpg" alt="Слайд 5">
 
-      <!-- Блок с таймером -->
-      <div class="countdown-wrapper">
-        <div class="countdown-title">До нашей свадьбы осталось:</div>
-        <div id="countdown"></div>
+    <!-- Слайд 2 -->
+    <div class="slide">
+      <div class="image-wrapper">
+        <img src="images/2.jpg" alt="Ах, эта свадьба!" />
+      </div>
+    </div>
+
+    <!-- Слайд 3 -->
+    <div class="slide">
+      <div class="image-wrapper">
+        <img src="images/3.jpg" alt="Ах, эта свадьба!" />
+      </div>
+    </div>
+
+    <!-- Слайд 4 -->
+    <div class="slide">
+      <div class="image-wrapper">
+        <img src="images/4.jpg" alt="Ах, эта свадьба!" />
+      </div>
+    </div>
+
+    <!-- Слайд 5 -->
+    <div class="slide">
+      <div class="image-wrapper">
+        <img src="images/5.jpg" alt="Ах, эта свадьба!" />
       </div>
 
-      <!-- Кнопка подтверждения -->
+      <!-- Отсчёт времени -->
+      <div class="countdown-wrapper">
+        <div class="countdown-title">До нашей свадьбы осталось:</div>
+        <div id="countdown-timer">00д 00ч 00м 00с</div>
+      </div>
+
+      <!-- Кнопка -->
       <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">
         ПОДТВЕРДИТЬ
       </button>
@@ -111,14 +166,12 @@
 
   <script>
     function updateCountdown() {
-      const countdownElement = document.getElementById("countdown");
-      const targetDate = new Date("2025-09-20T16:00:00+07:00"); // Томск
-
+      const weddingDate = new Date("2025-09-20T16:00:00+07:00"); // Томское время (GMT+7)
       const now = new Date();
-      const diff = targetDate - now;
+      const diff = weddingDate - now;
 
       if (diff <= 0) {
-        countdownElement.innerText = "Свадьба уже началась!";
+        document.getElementById('countdown-timer').textContent = "00д 00ч 00м 00с";
         return;
       }
 
@@ -127,12 +180,12 @@
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
 
-      countdownElement.innerText =
-        `${days} дн ${hours} ч ${minutes} мин ${seconds} сек`;
+      document.getElementById('countdown-timer').textContent =
+        `${days}д ${hours.toString().padStart(2, '0')}ч ${minutes.toString().padStart(2, '0')}м ${seconds.toString().padStart(2, '0')}с`;
     }
 
-    updateCountdown();
     setInterval(updateCountdown, 1000);
+    updateCountdown(); // первый вызов сразу
   </script>
 
 </body>
