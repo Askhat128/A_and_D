@@ -5,7 +5,6 @@
   <title>Свадебный сайт</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet" />
-
   <style>
     * {
       box-sizing: border-box;
@@ -14,57 +13,59 @@
     }
 
     html, body {
-      width: 100%;
-      overflow-x: hidden;
       font-family: 'Neucha', cursive;
       background: #000;
+      width: 100%;
+      overflow-x: hidden;
     }
 
     .image-container {
-      position: relative;
       width: 100%;
+      position: relative;
     }
 
     .image-container img {
       display: block;
       width: 100%;
       height: auto;
+      vertical-align: bottom;
     }
 
-    /* Последний слайд */
     .image-container.last {
-      height: 100vh;
+      height: auto;
     }
 
     .image-container.last img {
-      height: 100%;
-      object-fit: cover;
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
     .overlay-content {
       position: absolute;
-      top: 60%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
       color: black;
       z-index: 2;
-      padding: 0 20px;
+      padding: 20px;
+      width: 90%;
     }
 
     .overlay-content .countdown-title {
-      font-size: clamp(18px, 4vw, 28px);
+      font-size: clamp(18px, 3vw, 32px);
       margin-bottom: 10px;
     }
 
     #countdown-timer {
-      font-size: clamp(16px, 5vw, 24px);
+      font-size: clamp(16px, 4vw, 28px);
+      margin-bottom: 20px;
     }
 
     .image-button {
-      margin-top: 20px;
       padding: 14px 36px;
-      font-size: clamp(16px, 5vw, 24px);
+      font-size: clamp(16px, 4vw, 24px);
       border-radius: 64px;
       background-color: #ccc;
       color: black;
@@ -77,6 +78,12 @@
 
     .image-button:hover {
       background-color: #bbb;
+    }
+
+    @media (min-width: 1024px) {
+      .overlay-content {
+        top: 60%;
+      }
     }
   </style>
 </head>
