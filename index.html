@@ -22,6 +22,7 @@
     .image-container {
       position: relative;
       margin: 0;
+      padding: 0;
     }
 
     .image-container img {
@@ -32,21 +33,30 @@
       user-select: none;
     }
 
-    /* Последний слайд */
+    /* Последний слайд - контейнер фиксированной высоты */
     .image-container:last-child {
-      height: 100vh; /* Занимает весь экран по высоте */
+      height: 100vh;
       overflow: hidden;
     }
 
-    .image-container:last-child img {
+    /* Обёртка для картинки и элементов внутри последнего слайда */
+    .image-container:last-child .image-wrapper {
+      position: relative;
+      width: 100%;
       height: 100%;
-      object-fit: cover; /* Заполняет контейнер, сохраняя пропорции */
     }
 
-    /* Таймер */
+    .image-container:last-child .image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Таймер - абсолютное позиционирование внутри image-wrapper */
     .image-container:last-child .countdown-wrapper {
       position: absolute;
-      bottom: 180px;
+      top: 70%;
       left: 50%;
       transform: translateX(-50%);
       color: black;
@@ -61,10 +71,10 @@
       margin-bottom: 6px;
     }
 
-    /* Кнопка */
+    /* Кнопка - абсолютное позиционирование внутри image-wrapper */
     .image-container:last-child .image-button {
       position: absolute;
-      bottom: 60px;
+      top: 85%;
       left: 50%;
       transform: translateX(-50%);
       background-color: #ccc;
@@ -85,11 +95,11 @@
       .image-container:last-child .image-button {
         font-size: 18px;
         padding: 12px 28px;
-        bottom: 40px;
+        top: 88%;
       }
 
       .image-container:last-child .countdown-wrapper {
-        bottom: 140px;
+        top: 65%;
         font-size: 16px;
       }
     }
@@ -110,16 +120,18 @@
     <img src="images/4.jpg" alt="Слайд 4" />
   </div>
   <div class="image-container">
-    <img src="images/5.jpg" alt="Слайд 5" />
+    <div class="image-wrapper">
+      <img src="images/5.jpg" alt="Слайд 5" />
 
-    <div class="countdown-wrapper">
-      <div class="countdown-title">До нашей свадьбы осталось:</div>
-      <div id="countdown-timer">00д 00ч 00м 00с</div>
+      <div class="countdown-wrapper">
+        <div class="countdown-title">До нашей свадьбы осталось:</div>
+        <div id="countdown-timer">00д 00ч 00м 00с</div>
+      </div>
+
+      <button class="image-button" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeK9qyQ81NZsbMx-1zrv5h4CnHqABUSVBGQ73xjU7Toh0X9FA/viewform?usp=dialog', '_blank')">
+        ПОДТВЕРДИТЬ
+      </button>
     </div>
-
-    <button class="image-button" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeK9qyQ81NZsbMx-1zrv5h4CnHqABUSVBGQ73xjU7Toh0X9FA/viewform?usp=dialog', '_blank')">
-      ПОДТВЕРДИТЬ
-    </button>
   </div>
 
   <script>
