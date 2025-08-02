@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Свадебный сайт</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
+
   <!-- Подключаем красивый шрифт Neucha -->
   <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
 
@@ -22,6 +22,7 @@
     .slider-container {
       height: 100%;
       overflow-y: scroll;
+      scroll-snap-type: y mandatory;
     }
 
     .slide {
@@ -31,6 +32,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      scroll-snap-align: start;
     }
 
     .image-wrapper {
@@ -41,13 +43,13 @@
     .image-wrapper img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       display: block;
     }
 
     .image-button {
       position: absolute;
-      bottom: 60px;
+      bottom: 90px; /* подняли выше */
       left: 50%;
       transform: translateX(-50%);
       background-color: #ccc;
@@ -66,7 +68,7 @@
 
     .countdown-wrapper {
       position: absolute;
-      bottom: 180px; /* расстояние выше кнопки x2 */
+      bottom: 170px; /* подняли выше */
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
@@ -85,11 +87,11 @@
       .image-button {
         font-size: 18px;
         padding: 12px 28px;
-        bottom: 40px;
+        bottom: 60px; /* подняли выше */
       }
 
       .countdown-wrapper {
-        bottom: 140px;
+        bottom: 120px; /* подняли выше */
         font-size: 16px;
       }
     }
