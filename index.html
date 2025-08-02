@@ -9,26 +9,37 @@
   <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
 
   <style>
+    /* Универсальное правило для более предсказуемой модели коробки */
+    * {
+      box-sizing: border-box;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       font-family: 'Neucha', cursive;
-      overflow-x: hidden; /* запрет горизонтального скролла */
+      overflow-x: hidden; /* Запрет горизонтального скролла */
       scroll-behavior: smooth;
       background-color: #000;
     }
 
     .slider-container {
       height: 100%;
-      overflow-y: auto; /* вертикальная прокрутка */
-      overscroll-behavior-y: contain; /* чтобы избежать лишних эффектов прокрутки на мобильных */
+      width: 100vw; /* Чтобы контейнер не был шире экрана */
+      overflow-y: auto;  /* Вертикальная прокрутка */
+      overflow-x: hidden; /* Запрет горизонтальной прокрутки */
+      overscroll-behavior-y: contain; /* Предотвращаем лишние эффекты прокрутки на мобильных */
+      -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
     }
 
     .slide {
-      width: 100%; /* заменили 100vw на 100% */
+      width: 100%;
       height: 100vh;
       position: relative;
+      margin: 0;
+      padding: 0;
+      display: block; /* Убирает пробелы между элементами */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -37,6 +48,8 @@
     .image-wrapper {
       width: 100%;
       height: 100%;
+      margin: 0;
+      padding: 0;
     }
 
     .image-wrapper img {
@@ -44,6 +57,8 @@
       height: 100%;
       object-fit: contain;
       display: block;
+      margin: 0;
+      padding: 0;
     }
 
     .image-button {
