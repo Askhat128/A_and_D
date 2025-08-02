@@ -4,26 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
       margin: 0;
       background: #000;
     }
     .slide {
-      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
     }
     .slide img {
-      max-height: 100%;
       max-width: 100%;
-      object-fit: contain;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    /* === Мобильные устройства === */
+    @media (max-width: 768px) {
+      .slide {
+        height: auto;
+        padding: 10px 0;
+      }
+      .slide img {
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    /* === Компьютеры / планшеты === */
+    @media (min-width: 769px) {
+      .slide {
+        height: 100vh;
+      }
+      .slide img {
+        max-height: 100%;
+        object-fit: contain;
+      }
     }
   </style>
 </head>
