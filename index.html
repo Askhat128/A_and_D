@@ -3,30 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <title>Ах, эта свадьба!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
       background-color: #000;
-      overflow: hidden;
       font-family: sans-serif;
     }
 
     .slider-container {
-      height: 100vh;
-      width: 100vw;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
+      width: 100%;
     }
 
     .slide {
-      height: 100vh;
       width: 100vw;
-      scroll-snap-align: start;
+      height: 100vh;
       position: relative;
       display: flex;
       justify-content: center;
@@ -38,8 +30,11 @@
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
+      width: 100vw;
+      height: 100vh;
       user-select: none;
       pointer-events: none;
+      display: block;
     }
 
     .image-button {
@@ -57,7 +52,7 @@
       text-align: center;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      z-index: 3;
+      z-index: 2;
       transition: background-color 0.3s;
       user-select: none;
     }
@@ -66,20 +61,16 @@
       background-color: #bbb;
     }
 
-    .countdown-container {
-      position: absolute;
-      top: 5vh;
-      width: 100%;
-      text-align: center;
-      color: white;
-      font-size: clamp(20px, 4vw, 32px);
-      font-weight: bold;
-      text-shadow: 1px 1px 5px black;
-    }
-
     .countdown-time {
-      margin-top: 10px;
-      font-size: clamp(18px, 3vw, 28px);
+      position: absolute;
+      bottom: 12vh;
+      left: 50%;
+      transform: translateX(-50%);
+      color: black;
+      font-size: clamp(16px, 4vw, 22px);
+      font-weight: normal;
+      text-align: center;
+      z-index: 2;
     }
   </style>
 </head>
@@ -100,10 +91,11 @@
     </div>
     <div class="slide">
       <img src="images/5.jpg" alt="Слайд 5">
-      <div class="countdown-container">
-        До нашей свадьбы осталось:
-        <div class="countdown-time" id="countdown"></div>
-      </div>
+
+      <!-- Таймер -->
+      <div class="countdown-time" id="countdown"></div>
+
+      <!-- Кнопка подтверждения -->
       <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">
         ПОДТВЕРДИТЬ
       </button>
@@ -113,7 +105,7 @@
   <script>
     function updateCountdown() {
       const countdownElement = document.getElementById("countdown");
-      const targetDate = new Date("2025-09-20T16:00:00+07:00"); // Томское время
+      const targetDate = new Date("2025-09-20T16:00:00+07:00"); // Томск
 
       const now = new Date();
       const diff = targetDate - now;
@@ -129,7 +121,7 @@
       const seconds = Math.floor((diff / 1000) % 60);
 
       countdownElement.innerText =
-        `${days} дн ${hours} ч ${minutes} мин ${seconds} сек`;
+        `До нашей свадьбы осталось: ${days} дн ${hours} ч ${minutes} мин ${seconds} сек`;
     }
 
     updateCountdown();
