@@ -3,233 +3,137 @@
 <head>
   <meta charset="UTF-8" />
   <title>Ах, эта свадьба!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       background-color: #000;
+      overflow: hidden;
       font-family: sans-serif;
-      overflow-x: hidden;
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     .slider-container {
-      position: relative;
-      width: 100vw;
       height: 100vh;
-      overflow: hidden;
-      background-color: #000;
+      width: 100vw;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
     }
 
     .slide {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-      z-index: 0;
+      height: 100vh;
+      width: 100vw;
+      scroll-snap-align: start;
+      position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
       background-color: #000;
     }
 
-    .slide.active {
-      opacity: 1;
-      z-index: 1;
-    }
-
-    .image-wrapper {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .image-wrapper img {
-      width: 100%;
-      height: 100%;
+    .slide img {
+      max-width: 100%;
+      max-height: 100%;
       object-fit: contain;
-      display: block;
       user-select: none;
       pointer-events: none;
     }
 
-    .start-button,
     .image-button {
       position: absolute;
-      bottom: 5%;
+      bottom: 5vh;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 1.5em;
-      padding: 0.6em 1.5em;
-      border-radius: 2em;
-      background-color: #fff;
-      color: #000;
+      background-color: #ccc;
+      color: black;
+      border: none;
+      border-radius: 64px;
+      font-size: clamp(16px, 5vw, 24px);
       font-weight: bold;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      user-select: none;
+      padding: 12px 36px;
       text-align: center;
-      white-space: nowrap;
-      z-index: 5;
-      max-width: 90vw;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 3;
+      transition: background-color 0.3s;
+      user-select: none;
     }
 
-    .start-button:hover,
     .image-button:hover {
-      background-color: #eee;
+      background-color: #bbb;
     }
 
-    .nav-button {
+    .countdown-container {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: rgba(0, 0, 0, 0.6);
-      color: white;
-      border: none;
-      font-size: 2em;
-      width: 2.5em;
-      height: 6em;
-      cursor: pointer;
-      z-index: 2;
-      border-radius: 1em;
-      transition: background-color 0.3s, transform 0.2s;
+      top: 5vh;
+      width: 100%;
       text-align: center;
-      line-height: 6em;
-      user-select: none;
+      color: white;
+      font-size: clamp(20px, 4vw, 32px);
+      font-weight: bold;
+      text-shadow: 1px 1px 5px black;
     }
 
-    .nav-button:hover {
-      background-color: rgba(0, 0, 0, 0.8);
-      transform: translateY(-50%) scale(1.05);
-    }
-
-    .nav-left {
-      left: 10px;
-    }
-
-    .nav-right {
-      right: 10px;
-    }
-
-    .nav-button,
-    .image-button {
-      display: none;
-    }
-
-    .slide.active .nav-button,
-    .slide.active .image-button {
-      display: block;
-    }
-
-    @media (max-width: 768px) {
-      .start-button,
-      .image-button {
-        font-size: 1.2em;
-        padding: 0.5em 1.2em;
-      }
-
-      .nav-button {
-        width: 2.2em;
-        height: 5em;
-        font-size: 1.5em;
-        line-height: 5em;
-      }
-    }
-
-    @media (max-width: 400px) {
-      .start-button,
-      .image-button {
-        font-size: 1em;
-        padding: 0.5em 1em;
-      }
-
-      .nav-button {
-        width: 2em;
-        height: 4em;
-        font-size: 1.2em;
-        line-height: 4em;
-      }
+    .countdown-time {
+      margin-top: 10px;
+      font-size: clamp(18px, 3vw, 28px);
     }
   </style>
 </head>
 <body>
 
   <div class="slider-container">
-    <!-- Слайд 1 -->
-    <div class="slide active">
-      <div class="image-wrapper">
-        <img src="images/1.jpg" alt="Ах, эта свадьба!" />
-        <button class="start-button" onclick="goToSlide(1)">ОТКРЫТЬ ПРИГЛАСИТЕЛЬНОЕ</button>
-      </div>
-    </div>
-
-    <!-- Слайд 2 -->
     <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/2.jpg" alt="Ах, эта свадьба!" />
-      </div>
-      <button class="nav-button nav-left" onclick="prevSlide()">←</button>
-      <button class="nav-button nav-right" onclick="nextSlide()">→</button>
+      <img src="images/1.jpg" alt="Слайд 1">
     </div>
-
-    <!-- Слайд 3 -->
     <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/3.jpg" alt="Ах, эта свадьба!" />
-      </div>
-      <button class="nav-button nav-left" onclick="prevSlide()">←</button>
-      <button class="nav-button nav-right" onclick="nextSlide()">→</button>
+      <img src="images/2.jpg" alt="Слайд 2">
     </div>
-
-    <!-- Слайд 4 -->
     <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/4.jpg" alt="Ах, эта свадьба!" />
-      </div>
-      <button class="nav-button nav-left" onclick="prevSlide()">←</button>
-      <button class="nav-button nav-right" onclick="nextSlide()">→</button>
+      <img src="images/3.jpg" alt="Слайд 3">
     </div>
-
-    <!-- Слайд 5 -->
     <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/5.jpg" alt="Ах, эта свадьба!" />
-        <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">ПОДТВЕРДИТЬ</button>
+      <img src="images/4.jpg" alt="Слайд 4">
+    </div>
+    <div class="slide">
+      <img src="images/5.jpg" alt="Слайд 5">
+      <div class="countdown-container">
+        До нашей свадьбы осталось:
+        <div class="countdown-time" id="countdown"></div>
       </div>
-      <button class="nav-button nav-left" onclick="prevSlide()">←</button>
+      <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">
+        ПОДТВЕРДИТЬ
+      </button>
     </div>
   </div>
 
   <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
+    function updateCountdown() {
+      const countdownElement = document.getElementById("countdown");
+      const targetDate = new Date("2025-09-20T16:00:00+07:00"); // Томское время
 
-    function showSlide(index) {
-      slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === index);
-      });
-      currentSlide = index;
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        countdownElement.innerText = "Свадьба уже началась!";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      countdownElement.innerText =
+        `${days} дн ${hours} ч ${minutes} мин ${seconds} сек`;
     }
 
-    function nextSlide() {
-      showSlide((currentSlide + 1) % slides.length);
-    }
-
-    function prevSlide() {
-      showSlide((currentSlide - 1 + slides.length) % slides.length);
-    }
-
-    function goToSlide(index) {
-      showSlide(index);
-    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
   </script>
 
 </body>
