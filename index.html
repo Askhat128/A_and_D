@@ -15,6 +15,7 @@
       flex-direction: column;
       align-items: center;
       background-color: #f0f0f0;
+      font-family: 'Neucha', cursive;
     }
 
     img {
@@ -36,13 +37,109 @@
         height: auto;
       }
     }
+
+    /* Контейнер для последнего изображения — чтобы позиционировать оверлей */
+    .image-container {
+      position: relative;
+      width: 100%;
+      max-width: 100vw;
+      margin-bottom: 10px;
+    }
+
+    /* Оверлей поверх картинки */
+    .overlay-bottom {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: black;
+      width: 90%;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      padding: 15px 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      user-select: none;
+    }
+
+    .countdown-title {
+      font-size: clamp(16px, 3vw, 32px);
+      margin-bottom: 10px;
+    }
+
+    #countdown-timer {
+      font-size: clamp(14px, 3vw, 28px);
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .image-button {
+      padding: 14px 36px;
+      font-size: clamp(16px, 4vw, 24px);
+      border-radius: 64px;
+      background-color: #ccc;
+      color: black;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      white-space: nowrap;
+      font-family: 'Neucha', cursive;
+      transition: background-color 0.3s ease;
+    }
+
+    .image-button:hover {
+      background-color: #bbb;
+    }
   </style>
 </head>
 <body>
-  <img src="images/1.jpg" alt="Строительство дома">
-  <img src="images/2.jpg" alt="Строительство дома">
-  <img src="images/3.jpg" alt="Строительство дома">
-  <img src="images/4.jpg" alt="Строительство дома">
-  <img src="images/5.jpg" alt="Строительство дома">
+
+  <div class="image-container">
+    <img src="images/1.jpg" alt="Строительство дома">
+  </div>
+  <div class="image-container">
+    <img src="images/2.jpg" alt="Строительство дома">
+  </div>
+  <div class="image-container">
+    <img src="images/3.jpg" alt="Строительство дома">
+  </div>
+  <div class="image-container">
+    <img src="images/4.jpg" alt="Строительство дома">
+  </div>
+
+  <div class="image-container">
+    <img src="images/5.jpg" alt="Строительство дома">
+    <div class="overlay-bottom">
+      <div class="countdown-title">До нашей свадьбы осталось:</div>
+      <div id="countdown-timer">00д 00ч 00м 00с</div>
+      <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">ПОДТВЕРДИТЬ</button>
+    </div>
+  </div>
+
+  <script>
+    function updateCountdown() {
+      const weddingDate = new Date("2025-09-20T16:00:00+07:00");
+      const now = new Date();
+      const diff = weddingDate - now;
+
+      if (diff <= 0) {
+        document.getElementById('countdown-timer').textContent = "00д 00ч 00м 00с";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById('countdown-timer').textContent =
+        `${days}д ${hours.toString().padStart(2, '0')}ч ${minutes.toString().padStart(2, '0')}м ${seconds.toString().padStart(2, '0')}с`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+
 </body>
 </html>
