@@ -32,7 +32,18 @@
       user-select: none;
     }
 
-    /* Кнопка и таймер - только на последнем слайде */
+    /* Последний слайд */
+    .image-container:last-child {
+      height: 100vh; /* Занимает весь экран по высоте */
+      overflow: hidden;
+    }
+
+    .image-container:last-child img {
+      height: 100%;
+      object-fit: cover; /* Заполняет контейнер, сохраняя пропорции */
+    }
+
+    /* Таймер */
     .image-container:last-child .countdown-wrapper {
       position: absolute;
       bottom: 180px;
@@ -50,6 +61,7 @@
       margin-bottom: 6px;
     }
 
+    /* Кнопка */
     .image-container:last-child .image-button {
       position: absolute;
       bottom: 60px;
