@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <title>Ах, эта свадьба!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       background-color: #000;
-      font-family: 'Neucha', cursive;
+      font-family: sans-serif;
       overflow-x: hidden;
-      scroll-behavior: smooth;
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     .slider-container {
@@ -21,20 +23,21 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
+      background-color: #000;
     }
 
     .slide {
       position: absolute;
       top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       opacity: 0;
       transition: opacity 1s ease-in-out;
+      z-index: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       background-color: #000;
-      z-index: 0;
     }
 
     .slide.active {
@@ -43,97 +46,165 @@
     }
 
     .image-wrapper {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      position: relative;
+      width: 100%;
+      height: 100%;
     }
 
     .image-wrapper img {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
       display: block;
       user-select: none;
       pointer-events: none;
     }
 
-    .countdown-wrapper {
-      position: absolute;
-      bottom: 180px; /* выше кнопки на одинаковое расстояние */
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      color: black;
-      font-family: 'Neucha', cursive;
-      font-size: clamp(16px, 4vw, 22px);
-      white-space: nowrap;
-      z-index: 2;
-    }
-
-    .countdown-title {
-      margin-bottom: 6px;
-    }
-
-    .countdown-time {
-      font-weight: 400;
-      font-size: clamp(20px, 5vw, 28px);
-    }
-
+    .start-button,
     .image-button {
       position: absolute;
-      bottom: 60px;
+      bottom: 5%;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #ccc;
-      color: black;
-      border: none;
-      border-radius: 64px;
-      font-size: clamp(18px, 4vw, 24px);
+      font-size: 1.5em;
+      padding: 0.6em 1.5em;
+      border-radius: 2em;
+      background-color: #fff;
+      color: #000;
       font-weight: bold;
-      padding: 14px 40px;
-      text-align: center;
+      border: none;
       cursor: pointer;
-      font-family: 'Neucha', cursive;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      white-space: nowrap;
-      z-index: 3;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       user-select: none;
-      max-width: 80vw;
-      overflow-wrap: break-word;
+      text-align: center;
+      white-space: nowrap;
+      z-index: 5;
+      max-width: 90vw;
     }
 
+    .start-button:hover,
     .image-button:hover {
-      background-color: #bbb;
+      background-color: #eee;
+    }
+
+    .nav-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      font-size: 2em;
+      width: 2.5em;
+      height: 6em;
+      cursor: pointer;
+      z-index: 2;
+      border-radius: 1em;
+      transition: background-color 0.3s, transform 0.2s;
+      text-align: center;
+      line-height: 6em;
+      user-select: none;
+    }
+
+    .nav-button:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .nav-left {
+      left: 10px;
+    }
+
+    .nav-right {
+      right: 10px;
+    }
+
+    .nav-button,
+    .image-button {
+      display: none;
+    }
+
+    .slide.active .nav-button,
+    .slide.active .image-button {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .start-button,
+      .image-button {
+        font-size: 1.2em;
+        padding: 0.5em 1.2em;
+      }
+
+      .nav-button {
+        width: 2.2em;
+        height: 5em;
+        font-size: 1.5em;
+        line-height: 5em;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .start-button,
+      .image-button {
+        font-size: 1em;
+        padding: 0.5em 1em;
+      }
+
+      .nav-button {
+        width: 2em;
+        height: 4em;
+        font-size: 1.2em;
+        line-height: 4em;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="slider-container">
-    <!-- Слайды -->
+    <!-- Слайд 1 -->
     <div class="slide active">
-      <div class="image-wrapper"><img src="images/1.jpg" alt="Ах, эта свадьба!" /></div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper"><img src="images/2.jpg" alt="Ах, эта свадьба!" /></div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper"><img src="images/3.jpg" alt="Ах, эта свадьба!" /></div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper"><img src="images/4.jpg" alt="Ах, эта свадьба!" /></div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper"><img src="images/5.jpg" alt="Ах, эта свадьба!" /></div>
-
-      <!-- Таймер -->
-      <div class="countdown-wrapper">
-        <div class="countdown-title">До нашей свадьбы осталось:</div>
-        <div id="countdown-timer" class="countdown-time">Загрузка...</div>
+      <div class="image-wrapper">
+        <img src="images/1.jpg" alt="Ах, эта свадьба!" />
+        <button class="start-button" onclick="goToSlide(1)">ОТКРЫТЬ ПРИГЛАСИТЕЛЬНОЕ</button>
       </div>
+    </div>
 
-      <!-- Кнопка -->
-      <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">ПОДТВЕРДИТЬ</button>
+    <!-- Слайд 2 -->
+    <div class="slide">
+      <div class="image-wrapper">
+        <img src="images/2.jpg" alt="Ах, эта свадьба!" />
+      </div>
+      <button class="nav-button nav-left" onclick="prevSlide()">←</button>
+      <button class="nav-button nav-right" onclick="nextSlide()">→</button>
+    </div>
+
+    <!-- Слайд 3 -->
+    <div class="slide">
+      <div class="image-wrapper">
+        <img src="images/3.jpg" alt="Ах, эта свадьба!" />
+      </div>
+      <button class="nav-button nav-left" onclick="prevSlide()">←</button>
+      <button class="nav-button nav-right" onclick="nextSlide()">→</button>
+    </div>
+
+    <!-- Слайд 4 -->
+    <div class="slide">
+      <div class="image-wrapper">
+        <img src="images/4.jpg" alt="Ах, эта свадьба!" />
+      </div>
+      <button class="nav-button nav-left" onclick="prevSlide()">←</button>
+      <button class="nav-button nav-right" onclick="nextSlide()">→</button>
+    </div>
+
+    <!-- Слайд 5 -->
+    <div class="slide">
+      <div class="image-wrapper">
+        <img src="images/5.jpg" alt="Ах, эта свадьба!" />
+        <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">ПОДТВЕРДИТЬ</button>
+      </div>
+      <button class="nav-button nav-left" onclick="prevSlide()">←</button>
     </div>
   </div>
 
@@ -148,37 +219,17 @@
       currentSlide = index;
     }
 
-    // Автоматическая смена слайдов по времени (плавно)
-    // Если хочешь перелистывать вручную — скажи, добавлю кнопки или свайпы
     function nextSlide() {
       showSlide((currentSlide + 1) % slides.length);
     }
 
-    setInterval(nextSlide, 5000); // меняет слайд каждые 5 секунд
-
-    // Таймер до свадьбы
-    function updateCountdown() {
-      const weddingDate = new Date("2025-09-20T16:00:00+07:00");
-      const now = new Date();
-      const diff = weddingDate - now;
-
-      const timerEl = document.getElementById('countdown-timer');
-      if (diff <= 0) {
-        timerEl.textContent = "Свадьба уже началась!";
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      timerEl.textContent =
-        `${days} дн ${hours.toString().padStart(2, '0')} ч ${minutes.toString().padStart(2, '0')} м ${seconds.toString().padStart(2, '0')} с`;
+    function prevSlide() {
+      showSlide((currentSlide - 1 + slides.length) % slides.length);
     }
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+    function goToSlide(index) {
+      showSlide(index);
+    }
   </script>
 
 </body>

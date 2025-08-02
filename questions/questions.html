@@ -29,9 +29,16 @@
     margin-top: 5px;
     box-sizing: border-box;
   }
-  .guest-fio, .guest-alcohol {
+  .guest-block {
     margin-left: 20px;
-    margin-top: 10px;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+  }
+  .guest-block h4 {
+    margin: 0 0 10px 0;
   }
   button:disabled {
     background: #aaa;
@@ -61,7 +68,6 @@
   <div id="guestCountSection" style="display:none;">
     <label>2. Укажите количество гостей от семьи:</label>
     <div id="guestCountOptions">
-      <!-- Радиокнопки 1-6 -->
       <label><input type="radio" name="guestCount" value="1"> 1</label>
       <label><input type="radio" name="guestCount" value="2"> 2</label>
       <label><input type="radio" name="guestCount" value="3"> 3</label>
@@ -73,9 +79,6 @@
 
   <div id="guestDetailsSection"></div>
 
-  <label>5. Есть ли у вас аллергия на какую-то еду?</label>
-  <textarea name="allergy" rows="2" placeholder="Напишите, если есть"></textarea>
-
   <label>6. Откуда вы к нам приедете?</label>
   <input type="text" name="fromWhere" placeholder="Город или адрес" required>
 
@@ -84,14 +87,20 @@
 
 <script>
   const form = document.getElementById('surveyForm');
-  const attendanceRadios = form.elements['attendance'];
   const guestCountSection = document.getElementById('guestCountSection');
   const guestDetailsSection = document.getElementById('guestDetailsSection');
   const submitButton = form.querySelector('button[type="submit"]');
 
   // Показать блок выбора гостей только если "Придем"
   function toggleGuestCountSection() {
-    const attendance = form.elements['attendance'].value;
+    const attendanceRadios = form.elements['attendance'];
+    let attendance = null;
+    for (const radio of attendanceRadios) {
+      if (radio.checked) {
+        attendance = radio.value;
+        break;
+      }
+    }
     if (attendance === 'Придем') {
       guestCountSection.style.display = 'block';
     } else {
@@ -101,27 +110,41 @@
     validateForm();
   }
 
-  // Создать поля ФИО и алкоголь по количеству гостей
+  // Создать блоки гостей с ФИО, аллергией и алкоголем
   function createGuestFields(count) {
     guestDetailsSection.innerHTML = '';
 
     for(let i=1; i<=count; i++) {
+      const guestBlock = document.createElement('div');
+      guestBlock.className = 'guest-block';
+
+      const guestTitle = document.createElement('h4');
+      guestTitle.textContent = `Гость ${i}`;
+      guestBlock.appendChild(guestTitle);
+
       // ФИО
       const fioLabel = document.createElement('label');
-      fioLabel.textContent = `3.${i} ФИО гостя:`;
+      fioLabel.textContent = 'ФИО:';
       const fioInput = document.createElement('input');
       fioInput.type = 'text';
       fioInput.name = `guestFIO_${i}`;
       fioInput.placeholder = 'ФИО';
-      fioInput.className = 'guest-fio';
       fioInput.required = true;
+
+      // Аллергия
+      const allergyLabel = document.createElement('label');
+      allergyLabel.textContent = 'Есть ли аллергия на какую-то еду?';
+      const allergyInput = document.createElement('input');
+      allergyInput.type = 'text';
+      allergyInput.name = `guestAllergy_${i}`;
+      allergyInput.placeholder = 'Если есть, укажите';
+      allergyInput.required = false;
 
       // Алкоголь
       const alcoholLabel = document.createElement('label');
-      alcoholLabel.textContent = `4.${i} Какой алкоголь вы предпочитаете?`;
+      alcoholLabel.textContent = 'Какой алкоголь вы предпочитаете?';
       const alcoholSelect = document.createElement('select');
       alcoholSelect.name = `guestAlcohol_${i}`;
-      alcoholSelect.className = 'guest-alcohol';
       alcoholSelect.required = true;
 
       const options = ['Красное вино', 'Белое вино', 'Самогон', 'Не пью алкоголь'];
@@ -132,57 +155,72 @@
         alcoholSelect.appendChild(optionEl);
       });
 
-      guestDetailsSection.appendChild(fioLabel);
-      guestDetailsSection.appendChild(fioInput);
-      guestDetailsSection.appendChild(alcoholLabel);
-      guestDetailsSection.appendChild(alcoholSelect);
+      guestBlock.appendChild(fioLabel);
+      guestBlock.appendChild(fioInput);
+      guestBlock.appendChild(allergyLabel);
+      guestBlock.appendChild(allergyInput);
+      guestBlock.appendChild(alcoholLabel);
+      guestBlock.appendChild(alcoholSelect);
+
+      guestDetailsSection.appendChild(guestBlock);
     }
   }
 
-  // При изменении участия показывать/скрывать блок гостей
-  form.elements['attendance'].forEach(radio => {
+  // Отслеживаем выбор участия
+  const attendanceRadios = form.elements['attendance'];
+  for (const radio of attendanceRadios) {
     radio.addEventListener('change', () => {
       toggleGuestCountSection();
     });
-  });
+  }
 
-  // При выборе количества гостей создаём поля
-  form.elements['guestCount'].forEach(radio => {
-    radio.addEventListener('change', e => {
-      createGuestFields(parseInt(e.target.value));
-      validateForm();
-    });
-  });
+  // Отслеживаем выбор количества гостей
+  const guestCountRadios = form.elements['guestCount'];
+  if (guestCountRadios) {
+    for (const radio of guestCountRadios) {
+      radio.addEventListener('change', e => {
+        createGuestFields(parseInt(e.target.value));
+        validateForm();
+      });
+    }
+  }
 
-  // Валидация: все поля обязательны
+  // Валидация всех обязательных полей для активации кнопки
   function validateForm() {
-    // Проверка участия
-    const attendance = form.elements['attendance'].value;
+    // Проверяем участие
+    let attendance = null;
+    for (const radio of attendanceRadios) {
+      if (radio.checked) {
+        attendance = radio.value;
+        break;
+      }
+    }
     if (!attendance) {
       submitButton.disabled = true;
       return;
     }
 
     if (attendance === 'Придем') {
-      // Должен быть выбран guestCount
-      const guestCount = form.elements['guestCount'].value;
-      if (!guestCount) {
+      // Проверяем выбор количества гостей
+      const guestCountRadio = [...form.elements['guestCount']].find(r => r.checked);
+      if (!guestCountRadio) {
         submitButton.disabled = true;
         return;
       }
+      const guestCount = parseInt(guestCountRadio.value);
 
-      // Проверить заполнение ФИО и алкоголя
+      // Проверяем поля каждого гостя
       for (let i = 1; i <= guestCount; i++) {
         const fio = form.elements[`guestFIO_${i}`];
-        const alc = form.elements[`guestAlcohol_${i}`];
-        if (!fio.value.trim() || !alc.value) {
+        const alcohol = form.elements[`guestAlcohol_${i}`];
+        if (!fio.value.trim() || !alcohol.value) {
           submitButton.disabled = true;
           return;
         }
       }
     }
 
-    // Проверить аллергию и откуда
+    // Проверяем поле "Откуда приедете"
     if (!form.elements['fromWhere'].value.trim()) {
       submitButton.disabled = true;
       return;
@@ -193,23 +231,33 @@
 
   form.addEventListener('input', validateForm);
 
-  // Изначально прячем секцию гостей, кнопку отправить заблокируем
+  // Изначально скрываем секцию гостей
   guestCountSection.style.display = 'none';
   submitButton.disabled = true;
 
-  // --- Отправка формы ---
-
+  // Отправка данных на Google Apps Script
   form.addEventListener('submit', e => {
     e.preventDefault();
 
-    // Собираем данные для отправки
-    const attendance = form.elements['attendance'].value;
-    const guestCount = attendance === 'Придем' ? parseInt(form.elements['guestCount'].value) : 0;
+    let attendance = null;
+    for (const radio of attendanceRadios) {
+      if (radio.checked) {
+        attendance = radio.value;
+        break;
+      }
+    }
+
+    let guestCount = 0;
+    if (attendance === 'Придем') {
+      const guestCountRadio = [...form.elements['guestCount']].find(r => r.checked);
+      guestCount = guestCountRadio ? parseInt(guestCountRadio.value) : 0;
+    }
 
     const guests = [];
-    for(let i=1; i<=guestCount; i++) {
+    for (let i = 1; i <= guestCount; i++) {
       guests.push({
         fio: form.elements[`guestFIO_${i}`].value.trim(),
+        allergy: form.elements[`guestAllergy_${i}`].value.trim(),
         alcohol: form.elements[`guestAlcohol_${i}`].value
       });
     }
@@ -218,12 +266,10 @@
       attendance,
       guestCount,
       guests,
-      allergy: form.elements['allergy'].value.trim(),
       fromWhere: form.elements['fromWhere'].value.trim()
     };
 
-    // Здесь вставляешь URL своего Google Apps Script
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwVpL5xMOED2g7cRAMQzPSdZSkPAyxx43TZ7pDRIeA1-HQ85kMnChEYuJrfxJN-3V7i/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbw0lwmbGh944HTrzqHuzxZXMBH1HjZcZbtT7dYxfb1d3RlL_EO3gXzUWIlZ3QG8QEEU/exec';
 
     fetch(scriptUrl, {
       method: 'POST',
