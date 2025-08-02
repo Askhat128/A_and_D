@@ -3,137 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <title>Свадебный сайт</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-  <!-- Подключаем красивый шрифт Neucha -->
-  <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet" />
 
   <style>
-    html, body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      height: 100%;
+    }
+
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
       font-family: 'Neucha', cursive;
-      overflow-x: hidden; /* запрет горизонтального скролла */
-      scroll-behavior: smooth;
-      background-color: #000;
+      background: #000;
     }
 
-    .slider-container {
-      height: 100%;
-      overflow-y: auto; /* вертикальная прокрутка */
-      overscroll-behavior-y: contain; /* чтобы избежать лишних эффектов прокрутки на мобильных */
-    }
-
-    .slide {
-      width: 100%; /* заменили 100vw на 100% */
-      height: 100vh;
+    .image-container {
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      width: 100%;
     }
 
-    .image-wrapper {
-      width: 100%;
-      height: 100%;
-    }
-
-    .image-wrapper img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+    .image-container img {
       display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Последний слайд */
+    .image-container.last {
+      height: 100vh;
+    }
+
+    .image-container.last img {
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay-content {
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: black;
+      z-index: 2;
+      padding: 0 20px;
+    }
+
+    .overlay-content .countdown-title {
+      font-size: clamp(18px, 4vw, 28px);
+      margin-bottom: 10px;
+    }
+
+    #countdown-timer {
+      font-size: clamp(16px, 5vw, 24px);
     }
 
     .image-button {
-      position: absolute;
-      bottom: 60px;
-      left: 50%;
-      transform: translateX(-50%);
+      margin-top: 20px;
+      padding: 14px 36px;
+      font-size: clamp(16px, 5vw, 24px);
+      border-radius: 64px;
       background-color: #ccc;
       color: black;
       border: none;
-      border-radius: 64px;
-      font-size: 24px;
-      padding: 14px 36px;
-      font-family: 'Neucha', cursive;
       cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      max-width: 80vw;
-      z-index: 3;
-    }
-
-    .countdown-wrapper {
-      position: absolute;
-      bottom: 180px; /* расстояние выше кнопки x2 */
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      color: black;
       font-family: 'Neucha', cursive;
-      font-size: clamp(16px, 4vw, 22px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       white-space: nowrap;
-      z-index: 2;
     }
 
-    .countdown-title {
-      margin-bottom: 6px;
-    }
-
-    @media (max-width: 500px) {
-      .image-button {
-        font-size: 18px;
-        padding: 12px 28px;
-        bottom: 40px;
-      }
-
-      .countdown-wrapper {
-        bottom: 140px;
-        font-size: 16px;
-      }
+    .image-button:hover {
+      background-color: #bbb;
     }
   </style>
 </head>
 <body>
 
-  <div class="slider-container">
-    <!-- Слайды -->
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/1.jpg" alt="Slide 1" />
-      </div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/2.jpg" alt="Slide 2" />
-      </div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/3.jpg" alt="Slide 3" />
-      </div>
-    </div>
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/4.jpg" alt="Slide 4" />
-      </div>
-    </div>
+  <div class="image-container">
+    <img src="images/1.jpg" alt="Слайд 1">
+  </div>
+  <div class="image-container">
+    <img src="images/2.jpg" alt="Слайд 2">
+  </div>
+  <div class="image-container">
+    <img src="images/3.jpg" alt="Слайд 3">
+  </div>
+  <div class="image-container">
+    <img src="images/4.jpg" alt="Слайд 4">
+  </div>
 
-    <!-- Последний слайд с кнопкой и отсчётом -->
-    <div class="slide">
-      <div class="image-wrapper">
-        <img src="images/5.jpg" alt="Slide 5" />
-      </div>
-
-      <!-- Таймер -->
-      <div class="countdown-wrapper">
-        <div class="countdown-title">До нашей свадьбы осталось:</div>
-        <div id="countdown-timer">00д 00ч 00м 00с</div>
-      </div>
-
-      <!-- Кнопка -->
+  <div class="image-container last">
+    <img src="images/5.jpg" alt="Слайд 5">
+    <div class="overlay-content">
+      <div class="countdown-title">До нашей свадьбы осталось:</div>
+      <div id="countdown-timer">00д 00ч 00м 00с</div>
       <button class="image-button" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeK9qyQ81NZsbMx-1zrv5h4CnHqABUSVBGQ73xjU7Toh0X9FA/viewform?usp=dialog', '_blank')">
         ПОДТВЕРДИТЬ
       </button>
