@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Опросник</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: url('фон_здесь.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #222;
+    padding: 20px;
+  }
+  form {
+    background: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    padding: 7px;
+    margin-top: 5px;
+    box-sizing: border-box;
+  }
+  .guest-fio, .guest-alcohol {
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+  button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<form id="surveyForm">
+  <h2>Пожалуйста, заполните опрос</h2>
+
+  <label>1. Просим подтвердить ваше участие:</label>
+  <label><input type="radio" name="attendance" value="Придем" required> Придем</label>
+  <label><input type="radio" name="attendance" value="Не сможем присутствовать"> Не сможем присутствовать</label>
+
+  <div id="guestCountSection" style="display:none;">
+    <label>2. Укажите количество гостей от семьи:</label>
+    <div id="guestCountOptions">
+      <!-- Радиокнопки 1-6 -->
+      <label><input type="radio" name="guestCount" value="1"> 1</label>
+      <label><input type="radio" name="guestCount" value="2"> 2</label>
+      <label><input type="radio" name="guestCount" value="3"> 3</label>
+      <label><input type="radio" name="guestCount" value="4"> 4</label>
+      <label><input type="radio" name="guestCount" value="5"> 5</label>
+      <label><input type="radio" name="guestCount" value="6"> 6</label>
+    </div>
+  </div>
+
+  <div id="guestDetailsSection"></div>
+
+  <label>5. Есть ли у вас аллергия на какую-то еду?</label>
+  <textarea name="allergy" rows="2" placeholder="Напишите, если есть"></textarea>
+
+  <label>6. Откуда вы к нам приедете?</label>
+  <input type="text" name="fromWhere" placeholder="Город или адрес" required>
+
+  <button type="submit" disabled>Отправить</button>
+</form>
+
+<script>
+  const form = document.getElementById('surveyForm');
+  const attendanceRadios = form.elements['attendance'];
+  const guestCountSection = document.getElementById('guestCountSection');
+  const guestDetailsSection = document.getElementById('guestDetailsSection');
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  // Показать блок выбора гостей только если "Придем"
+  function toggleGuestCountSection() {
+    const attendance = form.elements['attendance'].value;
+    if (attendance === 'Придем') {
+      guestCountSection.style.display = 'block';
+    } else {
+      guestCountSection.style.display = 'none';
+      guestDetailsSection.innerHTML = '';
+    }
+    validateForm();
+  }
+
+  // Создать поля ФИО и алкоголь по количеству гостей
+  function createGuestFields(count) {
+    guestDetailsSection.innerHTML = '';
+
+    for(let i=1; i<=count; i++) {
+      // ФИО
+      const fioLabel = document.createElement('label');
+      fioLabel.textContent = `3.${i} ФИО гостя:`;
+      const fioInput = document.createElement('input');
+      fioInput.type = 'text';
+      fioInput.name = `guestFIO_${i}`;
+      fioInput.placeholder = 'ФИО';
+      fioInput.className = 'guest-fio';
+      fioInput.required = true;
+
+      // Алкоголь
+      const alcoholLabel = document.createElement('label');
+      alcoholLabel.textContent = `4.${i} Какой алкоголь вы предпочитаете?`;
+      const alcoholSelect = document.createElement('select');
+      alcoholSelect.name = `guestAlcohol_${i}`;
+      alcoholSelect.className = 'guest-alcohol';
+      alcoholSelect.required = true;
+
+      const options = ['Красное вино', 'Белое вино', 'Самогон', 'Не пью алкоголь'];
+      options.forEach(opt => {
+        const optionEl = document.createElement('option');
+        optionEl.value = opt;
+        optionEl.textContent = opt;
+        alcoholSelect.appendChild(optionEl);
+      });
+
+      guestDetailsSection.appendChild(fioLabel);
+      guestDetailsSection.appendChild(fioInput);
+      guestDetailsSection.appendChild(alcoholLabel);
+      guestDetailsSection.appendChild(alcoholSelect);
+    }
+  }
+
+  // При изменении участия показывать/скрывать блок гостей
+  form.elements['attendance'].forEach(radio => {
+    radio.addEventListener('change', () => {
+      toggleGuestCountSection();
+    });
+  });
+
+  // При выборе количества гостей создаём поля
+  form.elements['guestCount'].forEach(radio => {
+    radio.addEventListener('change', e => {
+      createGuestFields(parseInt(e.target.value));
+      validateForm();
+    });
+  });
+
+  // Валидация: все поля обязательны
+  function validateForm() {
+    // Проверка участия
+    const attendance = form.elements['attendance'].value;
+    if (!attendance) {
+      submitButton.disabled = true;
+      return;
+    }
+
+    if (attendance === 'Придем') {
+      // Должен быть выбран guestCount
+      const guestCount = form.elements['guestCount'].value;
+      if (!guestCount) {
+        submitButton.disabled = true;
+        return;
+      }
+
+      // Проверить заполнение ФИО и алкоголя
+      for (let i = 1; i <= guestCount; i++) {
+        const fio = form.elements[`guestFIO_${i}`];
+        const alc = form.elements[`guestAlcohol_${i}`];
+        if (!fio.value.trim() || !alc.value) {
+          submitButton.disabled = true;
+          return;
+        }
+      }
+    }
+
+    // Проверить аллергию и откуда
+    if (!form.elements['fromWhere'].value.trim()) {
+      submitButton.disabled = true;
+      return;
+    }
+
+    submitButton.disabled = false;
+  }
+
+  form.addEventListener('input', validateForm);
+
+  // Изначально прячем секцию гостей, кнопку отправить заблокируем
+  guestCountSection.style.display = 'none';
+  submitButton.disabled = true;
+
+  // --- Отправка формы ---
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    // Собираем данные для отправки
+    const attendance = form.elements['attendance'].value;
+    const guestCount = attendance === 'Придем' ? parseInt(form.elements['guestCount'].value) : 0;
+
+    const guests = [];
+    for(let i=1; i<=guestCount; i++) {
+      guests.push({
+        fio: form.elements[`guestFIO_${i}`].value.trim(),
+        alcohol: form.elements[`guestAlcohol_${i}`].value
+      });
+    }
+
+    const data = {
+      attendance,
+      guestCount,
+      guests,
+      allergy: form.elements['allergy'].value.trim(),
+      fromWhere: form.elements['fromWhere'].value.trim()
+    };
+
+    // Здесь вставляешь URL своего Google Apps Script
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwVpL5xMOED2g7cRAMQzPSdZSkPAyxx43TZ7pDRIeA1-HQ85kMnChEYuJrfxJN-3V7i/exec';
+
+    fetch(scriptUrl, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {'Content-Type': 'application/json'}
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Спасибо за ответ!');
+        form.reset();
+        guestDetailsSection.innerHTML = '';
+        guestCountSection.style.display = 'none';
+        submitButton.disabled = true;
+      } else {
+        alert('Ошибка при отправке, попробуйте позже.');
+      }
+    })
+    .catch(() => alert('Ошибка связи, проверьте интернет.'));
+  });
+</script>
+
+</body>
+</html>
