@@ -10,6 +10,7 @@
       padding: 0;
       background-color: #000;
       font-family: sans-serif;
+      overflow-x: hidden;
     }
 
     .slider-container {
@@ -27,14 +28,12 @@
     }
 
     .slide img {
-      max-width: 100%;
-      max-height: 100%;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
-      width: 100vw;
-      height: 100vh;
+      display: block;
       user-select: none;
       pointer-events: none;
-      display: block;
     }
 
     .image-button {
@@ -55,22 +54,27 @@
       z-index: 2;
       transition: background-color 0.3s;
       user-select: none;
+      white-space: nowrap;
     }
 
     .image-button:hover {
       background-color: #bbb;
     }
 
-    .countdown-time {
+    .countdown-wrapper {
       position: absolute;
-      bottom: 12vh;
+      bottom: 18vh; /* поднял выше кнопки */
       left: 50%;
       transform: translateX(-50%);
-      color: black;
-      font-size: clamp(16px, 4vw, 22px);
-      font-weight: normal;
       text-align: center;
+      color: black;
+      font-size: clamp(14px, 4vw, 22px);
+      font-weight: normal;
       z-index: 2;
+    }
+
+    .countdown-title {
+      margin-bottom: 6px;
     }
   </style>
 </head>
@@ -92,8 +96,11 @@
     <div class="slide">
       <img src="images/5.jpg" alt="Слайд 5">
 
-      <!-- Таймер -->
-      <div class="countdown-time" id="countdown"></div>
+      <!-- Блок с таймером -->
+      <div class="countdown-wrapper">
+        <div class="countdown-title">До нашей свадьбы осталось:</div>
+        <div id="countdown"></div>
+      </div>
 
       <!-- Кнопка подтверждения -->
       <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">
@@ -121,7 +128,7 @@
       const seconds = Math.floor((diff / 1000) % 60);
 
       countdownElement.innerText =
-        `До нашей свадьбы осталось: ${days} дн ${hours} ч ${minutes} мин ${seconds} сек`;
+        `${days} дн ${hours} ч ${minutes} мин ${seconds} сек`;
     }
 
     updateCountdown();
