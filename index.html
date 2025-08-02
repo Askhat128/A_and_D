@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Ах, эта свадьба!</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <style>
+    html {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -100,6 +106,7 @@
       z-index: 3;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       transition: background-color 0.3s;
+      white-space: nowrap;
     }
 
     .start-button:hover {
@@ -142,7 +149,7 @@
       display: block;
     }
 
-    /* Медиазапросы для уменьшения кнопок на маленьких экранах */
+    /* Медиазапросы уменьшают кнопки на маленьких экранах */
     @media (max-width: 768px) {
       .nav-button {
         width: 60px;
