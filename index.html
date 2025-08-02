@@ -7,59 +7,49 @@
   <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet" />
   <style>
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
     html, body {
       font-family: 'Neucha', cursive;
       background: #000;
-      width: 100%;
       overflow-x: hidden;
     }
 
     .image-container {
       width: 100%;
-      position: relative;
     }
 
     .image-container img {
-      display: block;
       width: 100%;
       height: auto;
-      vertical-align: bottom;
+      display: block;
     }
 
     .image-container.last {
-      height: auto;
+      position: relative;
     }
 
-    .image-container.last img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .overlay-content {
+    .overlay-bottom {
       position: absolute;
-      top: 50%;
+      bottom: 5%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       text-align: center;
       color: black;
-      z-index: 2;
-      padding: 20px;
       width: 90%;
+      z-index: 2;
     }
 
-    .overlay-content .countdown-title {
-      font-size: clamp(18px, 3vw, 32px);
+    .countdown-title {
+      font-size: clamp(16px, 3vw, 32px);
       margin-bottom: 10px;
     }
 
     #countdown-timer {
-      font-size: clamp(16px, 4vw, 28px);
+      font-size: clamp(14px, 3vw, 28px);
       margin-bottom: 20px;
     }
 
@@ -78,12 +68,6 @@
 
     .image-button:hover {
       background-color: #bbb;
-    }
-
-    @media (min-width: 1024px) {
-      .overlay-content {
-        top: 60%;
-      }
     }
   </style>
 </head>
@@ -104,12 +88,10 @@
 
   <div class="image-container last">
     <img src="images/5.jpg" alt="Слайд 5">
-    <div class="overlay-content">
+    <div class="overlay-bottom">
       <div class="countdown-title">До нашей свадьбы осталось:</div>
       <div id="countdown-timer">00д 00ч 00м 00с</div>
-      <button class="image-button" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeK9qyQ81NZsbMx-1zrv5h4CnHqABUSVBGQ73xjU7Toh0X9FA/viewform?usp=dialog', '_blank')">
-        ПОДТВЕРДИТЬ
-      </button>
+      <button class="image-button" onclick="window.open('https://forms.gle/iwJ9Xfqei9z84f3HA', '_blank')">ПОДТВЕРДИТЬ</button>
     </div>
   </div>
 
