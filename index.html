@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet" />
   <style>
     * {
       margin: 0;
@@ -11,42 +12,39 @@
     }
 
     body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background-color: #f0f0f0;
       font-family: 'Neucha', cursive;
+      background-color: #f0f0f0;
     }
 
-    img {
+    .image-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    .image-container img {
       object-fit: cover;
       border-radius: 10px;
       display: block;
     }
 
     /* По умолчанию — для компьютеров */
-    img {
+    .image-container img {
       height: 100vh;
       width: auto;
     }
 
-    /* Для телефонов (ширина экрана до 768px) */
+    /* Для телефонов */
     @media (max-width: 768px) {
-      img {
+      .image-container img {
         width: 100vw;
         height: auto;
       }
     }
 
-    /* Контейнер для последнего изображения — чтобы позиционировать оверлей */
-    .image-container {
-      position: relative;
-      width: 100%;
-      max-width: 100vw;
-      margin-bottom: 10px;
-    }
-
-    /* Оверлей поверх картинки */
     .overlay-bottom {
       position: absolute;
       bottom: 5%;
@@ -56,10 +54,6 @@
       color: black;
       width: 90%;
       z-index: 10;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 10px;
-      padding: 15px 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       user-select: none;
     }
 
@@ -82,9 +76,9 @@
       color: black;
       border: none;
       cursor: pointer;
+      font-family: 'Neucha', cursive;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       white-space: nowrap;
-      font-family: 'Neucha', cursive;
       transition: background-color 0.3s ease;
     }
 
