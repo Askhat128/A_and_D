@@ -20,6 +20,7 @@
       font-family: sans-serif;
       background-color: #000;
       overflow-x: hidden;
+      height: 100vh;
     }
 
     .slider-container {
@@ -50,13 +51,48 @@
       z-index: 1;
     }
 
-    .slide img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      display: block;
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end; /* Кнопка снизу */
+      padding-bottom: 50px;   /* Отступ снизу */
+      box-sizing: border-box;
     }
 
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Кнопка на первом слайде */
+    .start-button {
+      position: static;
+      max-width: 90%;
+      padding: 15px 40px;
+      font-size: 28px;
+      border-radius: 48px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+      white-space: nowrap;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+
+    .start-button:hover {
+      background-color: #eee;
+    }
+
+    /* Навигационные кнопки */
     .nav-button {
       position: absolute;
       top: 50%;
@@ -90,29 +126,7 @@
       right: 30px;
     }
 
-    .start-button {
-      position: absolute;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #fff;
-      color: #000;
-      padding: 20px 40px;
-      border: none;
-      border-radius: 48px;
-      font-size: 32px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 3;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      transition: background-color 0.3s;
-      white-space: nowrap;
-    }
-
-    .start-button:hover {
-      background-color: #eee;
-    }
-
+    /* Кнопка подтверждения на последнем слайде */
     .image-button {
       position: absolute;
       bottom: 100px;
@@ -133,23 +147,27 @@
       white-space: nowrap;
       z-index: 3;
       transition: background-color 0.3s;
+      user-select: none;
+      max-width: 90%;
     }
 
     .image-button:hover {
       background-color: #bbb;
     }
 
+    /* По умолчанию скрываем навигацию и кнопки */
     .nav-button,
     .image-button {
       display: none;
     }
 
+    /* Показываем только для активного слайда */
     .slide.active .nav-button,
     .slide.active .image-button {
       display: block;
     }
 
-    /* Медиазапросы уменьшают кнопки на маленьких экранах */
+    /* Адаптивность для маленьких экранов */
     @media (max-width: 768px) {
       .nav-button {
         width: 60px;
@@ -160,13 +178,14 @@
 
       .start-button {
         font-size: 24px;
-        padding: 15px 30px;
-        bottom: 60px;
+        padding: 12px 30px;
+        max-width: 90%;
       }
 
       .image-button {
         font-size: 24px;
-        padding: 15px 40px;
+        padding: 12px 40px;
+        max-width: 90%;
         bottom: 60px;
       }
     }
@@ -182,12 +201,13 @@
       .start-button {
         font-size: 18px;
         padding: 10px 20px;
-        bottom: 40px;
+        max-width: 90%;
       }
 
       .image-button {
         font-size: 18px;
         padding: 10px 25px;
+        max-width: 90%;
         bottom: 40px;
       }
     }
@@ -198,8 +218,10 @@
   <div class="slider-container">
     <!-- Слайд 1 -->
     <div class="slide active">
-      <img src="images/1.jpg" alt="Ах, эта свадьба!" />
-      <button class="start-button" onclick="goToSlide(1)">ОТКРЫТЬ ПРИГЛАСИТЕЛЬНОЕ</button>
+      <div class="image-wrapper">
+        <img src="images/1.jpg" alt="Ах, эта свадьба!" />
+        <button class="start-button" onclick="goToSlide(1)">ОТКРЫТЬ ПРИГЛАСИТЕЛЬНОЕ</button>
+      </div>
     </div>
 
     <!-- Слайд 2 -->
