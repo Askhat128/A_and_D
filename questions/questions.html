@@ -14,7 +14,7 @@
     }
 
     form {
-      background-color: rgba(255, 255, 255, 0.96);
+      background-color: rgba(255, 255, 255, 0.8);
       max-width: 600px;
       margin: 40px auto;
       padding: 30px 25px;
@@ -51,7 +51,7 @@
     }
 
     .guest-block {
-      background-color: #f8f8f8;
+      background-color: rgba(255, 255, 255, 0.7);
       border: 1px solid #ddd;
       border-radius: 10px;
       padding: 15px;
@@ -59,8 +59,8 @@
     }
 
     button[type="submit"] {
-      background-color: #4CAF50;
-      color: white;
+      background-color: #ccc;
+      color: #333;
       border: none;
       padding: 14px 24px;
       border-radius: 8px;
@@ -73,15 +73,36 @@
     }
 
     button[type="submit"]:hover {
-      background-color: #45a049;
+      background-color: #bbb;
     }
 
     .hidden {
       display: none;
     }
 
+    #loadingMessage {
+      text-align: center;
+      font-size: 18px;
+      color: #444;
+      margin-top: 30px;
+      display: none;
+    }
+
+    #thankYouMessage {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      color: #333;
+      display: none;
+    }
+
     @media (max-width: 600px) {
-      form {
+      form, #thankYouMessage {
         margin: 20px;
         padding: 20px;
       }
@@ -132,13 +153,17 @@
     <button type="submit">Отправить</button>
   </form>
 
-  <!-- Скрипт не тронут -->
+  <div id="loadingMessage">Загружается...</div>
+  <div id="thankYouMessage"></div>
+
   <script>
     const form = document.getElementById('rsvpForm');
     const attendanceRadios = document.getElementsByName('attendance');
     const guestFields = document.getElementById('guestFields');
     const attendanceBlock = document.getElementById('attendanceBlock');
     const nonAttendanceBlock = document.getElementById('nonAttendanceBlock');
+    const loadingMessage = document.getElementById('loadingMessage');
+    const thankYouMessage = document.getElementById('thankYouMessage');
 
     attendanceRadios.forEach(radio => {
       radio.addEventListener('change', () => {
@@ -184,6 +209,9 @@
 
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
+      form.style.display = 'none';
+      loadingMessage.style.display = 'block';
+
       const participation = document.querySelector('input[name="attendance"]:checked').value;
 
       if (participation === 'no') {
@@ -197,11 +225,9 @@
           city: ''
         };
         await sendToSheet(data);
-        alert("Спасибо! Ответ записан.");
-        form.reset();
-        guestFields.innerHTML = '';
-        attendanceBlock.classList.add('hidden');
-        nonAttendanceBlock.classList.add('hidden');
+        loadingMessage.style.display = 'none';
+        thankYouMessage.textContent = 'Спасибо за ответ, очень жаль что вы не приедете';
+        thankYouMessage.style.display = 'block';
         return;
       }
 
@@ -225,11 +251,9 @@
         await sendToSheet(data);
       }
 
-      alert("Спасибо! Все гости записаны.");
-      form.reset();
-      guestFields.innerHTML = '';
-      attendanceBlock.classList.add('hidden');
-      nonAttendanceBlock.classList.add('hidden');
+      loadingMessage.style.display = 'none';
+      thankYouMessage.textContent = 'Спасибо большое за ответ, ждем вас на свадьбе!';
+      thankYouMessage.style.display = 'block';
     });
 
     async function sendToSheet(data) {
