@@ -3,265 +3,170 @@
 <head>
   <meta charset="UTF-8">
   <title>RSVP Форма</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: url('images/background.jpg') no-repeat center center fixed;
       background-size: cover;
-      padding: 0;
+      padding-top: 7vh;
     }
 
     form {
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.85); /* Более прозрачный фон */
       max-width: 600px;
-      margin: 40px auto;
+      margin: auto;
       padding: 30px 25px;
       border-radius: 12px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
 
-    h2, h3, h4 {
+    h2 {
       text-align: center;
-      margin-top: 0;
-      color: #333;
+      margin-bottom: 25px;
     }
 
     label {
       display: block;
-      margin-top: 15px;
+      margin-bottom: 10px;
       font-weight: 500;
-      color: #444;
     }
 
     input[type="text"],
     select {
       width: 100%;
-      padding: 10px 12px;
-      margin-top: 5px;
+      padding: 10px;
+      margin-bottom: 18px;
       border: 1px solid #ccc;
       border-radius: 6px;
-      font-size: 14px;
-      box-sizing: border-box;
     }
 
-    input[type="radio"] {
-      margin-right: 6px;
+    .button-group {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
     }
 
-    .guest-block {
-      background-color: rgba(255, 255, 255, 0.7);
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 15px;
-      margin-top: 20px;
-    }
-
-    button[type="submit"] {
-      background-color: #ccc;
-      color: #333;
+    .button-group button {
+      padding: 10px 20px;
+      background-color: #ccc; /* Новый цвет кнопки */
       border: none;
-      padding: 14px 24px;
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 6px;
       cursor: pointer;
-      display: block;
-      width: 100%;
-      margin-top: 25px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.2s;
     }
 
-    button[type="submit"]:hover {
+    .button-group button:hover {
       background-color: #bbb;
     }
 
-    .hidden {
+    .conditional {
       display: none;
     }
 
+    #thankYouMessage,
     #loadingMessage {
-      text-align: center;
-      font-size: 18px;
-      color: #444;
-      margin-top: 30px;
       display: none;
-    }
-
-    #thankYouMessage {
+      background-color: rgba(255, 255, 255, 0.85);
       max-width: 600px;
-      margin: 40px auto;
-      background-color: rgba(255, 255, 255, 0.9);
+      margin: auto;
+      margin-top: 7vh;
       padding: 30px;
       border-radius: 12px;
       text-align: center;
       font-size: 20px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      color: #333;
-      display: none;
-    }
-
-    @media (max-width: 600px) {
-      form, #thankYouMessage {
-        margin: 20px;
-        padding: 20px;
-      }
-
-      h2, h3 {
-        font-size: 20px;
-      }
-
-      button[type="submit"] {
-        font-size: 15px;
-        padding: 12px 18px;
-      }
     }
   </style>
 </head>
 <body>
-
-  <h2>Подтвердите ваше участие</h2>
-
   <form id="rsvpForm">
-    <label>
-      <input type="radio" name="attendance" value="yes"> Придем
-    </label>
-    <label>
-      <input type="radio" name="attendance" value="no"> Не сможем присутствовать
-    </label>
+    <h2>RSVP — Подтверждение участия</h2>
 
-    <div id="nonAttendanceBlock" class="hidden">
-      <h3>ФИО</h3>
-      <input type="text" id="singleName">
+    <div class="button-group">
+      <button type="button" onclick="showBlock('yes')">Придем</button>
+      <button type="button" onclick="showBlock('no')">Не сможем прийти</button>
     </div>
 
-    <div id="attendanceBlock" class="hidden">
-      <label>Укажите количество гостей от семьи:</label>
-      <label><input type="radio" name="guestCount" value="1"> 1</label>
-      <label><input type="radio" name="guestCount" value="2"> 2</label>
-      <label><input type="radio" name="guestCount" value="3"> 3</label>
-      <label><input type="radio" name="guestCount" value="4"> 4</label>
-      <label><input type="radio" name="guestCount" value="5"> 5</label>
-      <label><input type="radio" name="guestCount" value="6"> 6</label>
+    <div id="yesBlock" class="conditional">
+      <label>ФИО:</label>
+      <input type="text" name="name_yes" required>
 
-      <div id="guestFields"></div>
+      <label>Алкоголь:</label>
+      <select name="alcohol">
+        <option value="Без разницы">Без разницы</option>
+        <option value="С алкоголем">С алкоголем</option>
+        <option value="Без алкоголя">Без алкоголя</option>
+      </select>
 
-      <label for="city">Откуда вы к нам приедете?</label>
-      <input type="text" id="city">
+      <label>Аллергии / Комментарии:</label>
+      <input type="text" name="allergy">
+
+      <label>Из какого вы города?</label>
+      <input type="text" name="city">
     </div>
 
-    <button type="submit">Отправить</button>
+    <div id="noBlock" class="conditional">
+      <label>ФИО:</label>
+      <input type="text" name="name_no" required>
+    </div>
+
+    <div style="text-align:center;">
+      <button type="submit">Отправить</button>
+    </div>
   </form>
 
   <div id="loadingMessage">Загружается...</div>
   <div id="thankYouMessage"></div>
 
   <script>
-    const form = document.getElementById('rsvpForm');
-    const attendanceRadios = document.getElementsByName('attendance');
-    const guestFields = document.getElementById('guestFields');
-    const attendanceBlock = document.getElementById('attendanceBlock');
-    const nonAttendanceBlock = document.getElementById('nonAttendanceBlock');
-    const loadingMessage = document.getElementById('loadingMessage');
-    const thankYouMessage = document.getElementById('thankYouMessage');
+    let selectedOption = '';
 
-    attendanceRadios.forEach(radio => {
-      radio.addEventListener('change', () => {
-        const isComing = radio.value === 'yes';
-        attendanceBlock.classList.toggle('hidden', !isComing);
-        nonAttendanceBlock.classList.toggle('hidden', isComing);
-        guestFields.innerHTML = '';
-        document.getElementById('city').value = '';
-        document.getElementById('singleName').value = '';
-        document.getElementById('singleName').required = !isComing;
-        document.getElementById('city').required = isComing;
-        document.querySelectorAll('[name^="fio"], [name^="alcohol"], [name^="allergy"]').forEach(el => {
-          el.required = false;
-        });
-      });
-    });
+    function showBlock(option) {
+      selectedOption = option;
+      document.getElementById('yesBlock').style.display = option === 'yes' ? 'block' : 'none';
+      document.getElementById('noBlock').style.display = option === 'no' ? 'block' : 'none';
 
-    document.querySelectorAll('input[name="guestCount"]').forEach(radio => {
-      radio.addEventListener('change', () => {
-        const count = parseInt(radio.value);
-        guestFields.innerHTML = '';
-        for (let i = 1; i <= count; i++) {
-          guestFields.innerHTML += `
-            <div class="guest-block">
-              <h4>Гость №${i}</h4>
-              <label>ФИО:</label>
-              <input type="text" name="fio${i}" required>
-              <label>Какой алкоголь вы предпочитаете?</label>
-              <select name="alcohol${i}">
-                <option>Красное вино</option>
-                <option>Белое вино</option>
-                <option>Коньяк</option>
-                <option>Самогон</option>
-                <option>Не пью алкоголь</option>
-              </select>
-              <label>Есть ли аллергия?<br><small>Укажите, у кого в семье аллергия и на какие продукты.</small></label>
-              <input type="text" name="allergy${i}">
-            </div>
-          `;
-        }
-      });
-    });
+      // Очистка противоположного поля
+      if (option === 'yes') {
+        document.querySelector('input[name="name_no"]').value = '';
+      } else {
+        document.querySelector('input[name="name_yes"]').value = '';
+        document.querySelector('input[name="alcohol"]').selectedIndex = 0;
+        document.querySelector('input[name="allergy"]').value = '';
+        document.querySelector('input[name="city"]').value = '';
+      }
+    }
 
-    form.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      form.style.display = 'none';
-      loadingMessage.style.display = 'block';
+    document.getElementById('rsvpForm').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-      const participation = document.querySelector('input[name="attendance"]:checked').value;
-
-      if (participation === 'no') {
-        const fullName = document.getElementById('singleName').value;
-        const data = {
-          num: 1,
-          participation: "Нет",
-          fio: fullName,
-          alcohol: '',
-          allergy: '',
-          city: ''
-        };
-        await sendToSheet(data);
-        loadingMessage.style.display = 'none';
-        thankYouMessage.textContent = 'Спасибо за ответ, очень жаль что вы не приедете';
-        thankYouMessage.style.display = 'block';
+      // Проверка на выбор варианта
+      if (!selectedOption) {
+        alert("Пожалуйста, выберите 'Придем' или 'Не сможем прийти'.");
         return;
       }
 
-      const city = document.getElementById('city').value;
-      const guestCount = parseInt(document.querySelector('input[name="guestCount"]:checked').value);
+      const form = document.getElementById('rsvpForm');
+      const loading = document.getElementById('loadingMessage');
+      const thankYou = document.getElementById('thankYouMessage');
 
-      for (let i = 1; i <= guestCount; i++) {
-        const fio = document.querySelector(`[name="fio${i}"]`).value;
-        const alcohol = document.querySelector(`[name="alcohol${i}"]`).value;
-        const allergy = document.querySelector(`[name="allergy${i}"]`).value;
+      form.style.display = 'none';
+      loading.style.display = 'block';
 
-        const data = {
-          num: i,
-          participation: "Да",
-          fio,
-          alcohol,
-          allergy,
-          city
-        };
+      setTimeout(() => {
+        loading.style.display = 'none';
+        thankYou.style.display = 'block';
 
-        await sendToSheet(data);
-      }
+        if (selectedOption === 'yes') {
+          thankYou.innerText = "Спасибо большое за ответ, ждем вас на свадьбе!";
+        } else {
+          thankYou.innerText = "Спасибо за ответ, очень жаль что вы не приедете";
+        }
 
-      loadingMessage.style.display = 'none';
-      thankYouMessage.textContent = 'Спасибо большое за ответ, ждем вас на свадьбе!';
-      thankYouMessage.style.display = 'block';
+        // Здесь ты можешь добавить отправку в Google Таблицы, если нужно
+      }, 1500);
     });
-
-    async function sendToSheet(data) {
-      await fetch('https://script.google.com/macros/s/AKfycbyPpeoLWUwP8rElR-Cvxwr67xohzEnzlPAhpLD1_RuzraPUzsHK_Ndl9fP9NOIuXc8O8g/exec', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
-    }
   </script>
 </body>
 </html>
