@@ -1,0 +1,16 @@
+function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const data = JSON.parse(e.postData.contents);
+
+  const row = [
+    data.num,
+    data.participation,
+    data.fio,
+    data.alcohol,
+    data.allergy,
+    data.city
+  ];
+
+  sheet.appendRow(row);
+  return ContentService.createTextOutput("OK").setMimeType(ContentService.MimeType.TEXT);
+}
