@@ -5,7 +5,7 @@
   <title>RSVP Форма</title>
   <style>
     body {
-      background-image: url('images/6.jpg'); /* Замени на свой путь к изображению */
+      background-image: url('images/6.jpg');
       background-size: cover;
       background-position: center;
       font-family: Arial, sans-serif;
@@ -26,7 +26,7 @@
       margin-top: 15px;
     }
 
-    input[type="text"], select, textarea {
+    input[type="text"], select {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -55,7 +55,7 @@
 
   <div id="not-coming" style="display:none;">
     <label>ФИО:</label>
-    <input type="text" name="fio_no" required>
+    <input type="text" name="fio_no" id="fio_no">
     <p>Нам очень жаль, но спасибо за поздравление!</p>
   </div>
 
@@ -66,7 +66,7 @@
     <div id="guest-details"></div>
 
     <label>4. Откуда вы к нам приедете?</label>
-    <input type="text" name="location" id="locationInput" required>
+    <input type="text" name="location" id="locationInput">
   </div>
 
   <br>
@@ -79,11 +79,13 @@
   const guestDetails = document.getElementById('guest-details');
   const submitBtn = document.getElementById('submitBtn');
   const locationInput = document.getElementById('locationInput');
+  const fioNoInput = document.getElementById('fio_no');
 
   const updateSubmitState = () => {
     const attending = form.elements['attendance'].value;
+
     if (attending === 'no') {
-      submitBtn.disabled = !form.elements['fio_no'].value.trim();
+      submitBtn.disabled = !fioNoInput.value.trim();
     } else if (attending === 'yes') {
       let allFilled = !!locationInput.value.trim();
       document.querySelectorAll('.guest-block input, .guest-block select').forEach(el => {
@@ -103,9 +105,17 @@
       const value = e.target.value;
       document.getElementById('not-coming').style.display = value === 'no' ? 'block' : 'none';
       document.getElementById('coming').style.display = value === 'yes' ? 'block' : 'none';
+
+      // Очищаем поля при переключении
       if (value === 'yes') {
+        fioNoInput.value = '';
         renderGuestCount();
+      } else if (value === 'no') {
+        locationInput.value = '';
+        guestDetails.innerHTML = '';
+        guestCountOptions.innerHTML = '';
       }
+
       updateSubmitState();
     });
   });
@@ -135,10 +145,10 @@
 
       block.innerHTML = `
         <label>2.1. ФИО гостя ${i}:</label>
-        <input type="text" name="guest_${i}_fio" required>
+        <input type="text" name="guest_${i}_fio">
 
         <label>2.2. Какой алкоголь вы предпочитаете?</label>
-        <select name="guest_${i}_alcohol" required>
+        <select name="guest_${i}_alcohol">
           <option value="">Выберите</option>
           <option value="Красное вино">Красное вино</option>
           <option value="Белое вино">Белое вино</option>
@@ -157,11 +167,21 @@
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const formData = {};
-    const formElements = form.elements;
-    for (let el of formElements) {
-      if (el.name && el.value) {
-        formData[el.name] = el.value;
+    const attending = form.elements['attendance'].value;
+    const formData = { attendance };
+
+    if (attending === 'no') {
+      formData['fio_no'] = fioNoInput.value.trim();
+    } else if (attending === 'yes') {
+      formData['location'] = locationInput.value.trim();
+
+      const guestCount = form.elements['guest_count'].value;
+      formData['guest_count'] = guestCount;
+
+      for (let i = 1; i <= guestCount; i++) {
+        formData[`guest_${i}_fio`] = form.elements[`guest_${i}_fio`].value.trim();
+        formData[`guest_${i}_alcohol`] = form.elements[`guest_${i}_alcohol`].value;
+        formData[`guest_${i}_allergy`] = form.elements[`guest_${i}_allergy`].value.trim();
       }
     }
 
