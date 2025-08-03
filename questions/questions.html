@@ -82,6 +82,7 @@ form.elements['attendance'].forEach(radio => {
   radio.addEventListener('change', e => {
     const value = e.target.value;
 
+    // Скрываем и очищаем обе секции
     document.getElementById('not-coming').style.display = 'none';
     document.getElementById('coming').style.display = 'none';
     fioNoInput.value = '';
@@ -177,13 +178,10 @@ form.addEventListener('submit', function (event) {
     }
   }
 
-  // ✅ Обновлённый fetch с JSON-заголовком
+  // Отправка
   statusMessage.textContent = 'Отправка...';
   fetch('https://script.google.com/macros/s/AKfycbyPpeoLWUwP8rElR-Cvxwr67xohzEnzlPAhpLD1_RuzraPUzsHK_Ndl9fP9NOIuXc8O8g/exec', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
     body: JSON.stringify(formData)
   })
     .then(res => res.text())
