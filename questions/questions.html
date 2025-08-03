@@ -5,7 +5,7 @@
   <title>RSVP Форма</title>
   <style>
     body {
-      background-image: url('images/6.jpg');
+      background-image: url('images/6.jpg'); /* Замени на свой путь к изображению */
       background-size: cover;
       background-position: center;
       font-family: Arial, sans-serif;
@@ -106,7 +106,6 @@
       document.getElementById('not-coming').style.display = value === 'no' ? 'block' : 'none';
       document.getElementById('coming').style.display = value === 'yes' ? 'block' : 'none';
 
-      // Очищаем поля при переключении
       if (value === 'yes') {
         fioNoInput.value = '';
         renderGuestCount();
@@ -175,13 +174,20 @@
     } else if (attending === 'yes') {
       formData['location'] = locationInput.value.trim();
 
-      const guestCount = form.elements['guest_count'].value;
-      formData['guest_count'] = guestCount;
+      const guestCountRadio = form.querySelector('input[name="guest_count"]:checked');
+      if (guestCountRadio) {
+        const guestCount = parseInt(guestCountRadio.value);
+        formData['guest_count'] = guestCount;
 
-      for (let i = 1; i <= guestCount; i++) {
-        formData[`guest_${i}_fio`] = form.elements[`guest_${i}_fio`].value.trim();
-        formData[`guest_${i}_alcohol`] = form.elements[`guest_${i}_alcohol`].value;
-        formData[`guest_${i}_allergy`] = form.elements[`guest_${i}_allergy`].value.trim();
+        for (let i = 1; i <= guestCount; i++) {
+          const fioEl = form.querySelector(`[name="guest_${i}_fio"]`);
+          const alcEl = form.querySelector(`[name="guest_${i}_alcohol"]`);
+          const allEl = form.querySelector(`[name="guest_${i}_allergy"]`);
+
+          formData[`guest_${i}_fio`] = fioEl ? fioEl.value.trim() : '';
+          formData[`guest_${i}_alcohol`] = alcEl ? alcEl.value : '';
+          formData[`guest_${i}_allergy`] = allEl ? allEl.value.trim() : '';
+        }
       }
     }
 
