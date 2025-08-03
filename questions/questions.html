@@ -98,7 +98,7 @@
   form.addEventListener('input', updateSubmitState);
   form.addEventListener('change', updateSubmitState);
 
-  form.elements['attendance'].forEach(radio => {
+  [...form.elements['attendance']].forEach(radio => {
     radio.addEventListener('change', (e) => {
       const value = e.target.value;
       document.getElementById('not-coming').style.display = value === 'no' ? 'block' : 'none';
@@ -113,6 +113,7 @@
   function renderGuestCount() {
     guestCountOptions.innerHTML = '';
     for (let i = 1; i <= 6; i++) {
+      const label = document.createElement('label');
       const radio = document.createElement('input');
       radio.type = 'radio';
       radio.name = 'guest_count';
@@ -120,8 +121,9 @@
 
       radio.addEventListener('change', () => renderGuestBlocks(parseInt(radio.value)));
 
-      guestCountOptions.appendChild(radio);
-      guestCountOptions.appendChild(document.createTextNode( ${i} ));
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(` ${i}`));
+      guestCountOptions.appendChild(label);
     }
   }
 
@@ -131,7 +133,7 @@
       const block = document.createElement('div');
       block.className = 'guest-block';
 
-      block.innerHTML = 
+      block.innerHTML = `
         <label>2.1. ФИО гостя ${i}:</label>
         <input type="text" name="guest_${i}_fio" required>
 
@@ -146,7 +148,7 @@
 
         <label>2.3. Есть ли у вас аллергия?</label>
         <input type="text" name="guest_${i}_allergy">
-      ;
+      `;
 
       guestDetails.appendChild(block);
     }
@@ -179,6 +181,7 @@
     })
     .catch(error => {
       console.error('Ошибка:', error);
+      alert('Произошла ошибка при отправке формы.');
     });
   });
 </script>
