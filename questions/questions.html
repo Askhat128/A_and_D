@@ -160,7 +160,7 @@
     const attendance = formData.get('attendance');
 
     if (attendance === 'no') {
-      fetch('URL_ВАШЕГО_СКРИПТА', {
+      fetch('https://script.google.com/macros/s/AKfycbyPpeoLWUwP8rElR-Cvxwr67xohzEnzlPAhpLD1_RuzraPUzsHK_Ndl9fP9NOIuXc8O8g/exec', {
         method: 'POST',
         body: JSON.stringify({
           attendance: 'Не сможем присутствовать',
