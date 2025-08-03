@@ -5,20 +5,21 @@
   <title>RSVP Форма</title>
   <style>
     body {
-      background-image: url('images/6.jpg'); /* Замени на свой путь к изображению */
+      background-image: url('images/6.jpg'); /* Замените на свой светлый фон */
       background-size: cover;
       background-position: center;
       font-family: Arial, sans-serif;
       padding: 20px;
-      color: #fff;
+      color: #000;
     }
 
     form {
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(255, 255, 255, 0.9);
       padding: 20px;
       border-radius: 12px;
       max-width: 800px;
       margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
 
     label {
@@ -26,18 +27,18 @@
       margin-top: 15px;
     }
 
-    input[type="text"], select, textarea {
+    input[type="text"], select {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
       border-radius: 4px;
-      border: none;
+      border: 1px solid #ccc;
     }
 
     .guest-block {
       margin-top: 10px;
       padding: 10px;
-      background-color: rgba(255,255,255,0.1);
+      background-color: #f5f5f5;
       border-radius: 8px;
     }
 
@@ -55,7 +56,7 @@
 
   <div id="not-coming" style="display:none;">
     <label>ФИО:</label>
-    <input type="text" name="fio_no" required>
+    <input type="text" name="fio_no" id="fioNoInput">
     <p>Нам очень жаль, но спасибо за поздравление!</p>
   </div>
 
@@ -66,7 +67,7 @@
     <div id="guest-details"></div>
 
     <label>4. Откуда вы к нам приедете?</label>
-    <input type="text" name="location" id="locationInput" required>
+    <input type="text" name="location" id="locationInput">
   </div>
 
   <br>
@@ -78,25 +79,9 @@
   const guestCountOptions = document.getElementById('guest-count-options');
   const guestDetails = document.getElementById('guest-details');
   const submitBtn = document.getElementById('submitBtn');
+
   const locationInput = document.getElementById('locationInput');
-
-  const updateSubmitState = () => {
-    const attending = form.elements['attendance'].value;
-    if (attending === 'no') {
-      submitBtn.disabled = !form.elements['fio_no'].value.trim();
-    } else if (attending === 'yes') {
-      let allFilled = !!locationInput.value.trim();
-      document.querySelectorAll('.guest-block input, .guest-block select').forEach(el => {
-        if (!el.value.trim()) allFilled = false;
-      });
-      submitBtn.disabled = !allFilled;
-    } else {
-      submitBtn.disabled = true;
-    }
-  };
-
-  form.addEventListener('input', updateSubmitState);
-  form.addEventListener('change', updateSubmitState);
+  const fioNoInput = document.getElementById('fioNoInput');
 
   form.elements['attendance'].forEach(radio => {
     radio.addEventListener('change', (e) => {
@@ -110,6 +95,24 @@
     });
   });
 
+  form.addEventListener('input', updateSubmitState);
+  form.addEventListener('change', updateSubmitState);
+
+  function updateSubmitState() {
+    const attending = form.elements['attendance'].value;
+    if (attending === 'no') {
+      submitBtn.disabled = !fioNoInput.value.trim();
+    } else if (attending === 'yes') {
+      let valid = locationInput.value.trim() !== '';
+      document.querySelectorAll('.guest-block input, .guest-block select').forEach(el => {
+        if (!el.value.trim()) valid = false;
+      });
+      submitBtn.disabled = !valid;
+    } else {
+      submitBtn.disabled = true;
+    }
+  }
+
   function renderGuestCount() {
     guestCountOptions.innerHTML = '';
     for (let i = 1; i <= 6; i++) {
@@ -117,8 +120,7 @@
       radio.type = 'radio';
       radio.name = 'guest_count';
       radio.value = i;
-
-      radio.addEventListener('change', () => renderGuestBlocks(parseInt(radio.value)));
+      radio.addEventListener('change', () => renderGuestBlocks(i));
 
       guestCountOptions.appendChild(radio);
       guestCountOptions.appendChild(document.createTextNode(` ${i} `));
@@ -147,7 +149,6 @@
         <label>2.3. Есть ли у вас аллергия?</label>
         <input type="text" name="guest_${i}_allergy">
       `;
-
       guestDetails.appendChild(block);
     }
   }
@@ -155,33 +156,61 @@
   form.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const formData = {};
-    const formElements = form.elements;
-    for (let el of formElements) {
-      if (el.name && el.value) {
-        formData[el.name] = el.value;
-      }
+    const formData = new FormData(form);
+    const attendance = formData.get('attendance');
+
+    if (attendance === 'no') {
+      fetch('URL_ВАШЕГО_СКРИПТА', {
+        method: 'POST',
+        body: JSON.stringify({
+          attendance: 'Не сможем присутствовать',
+          fio: formData.get('fio_no')
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.text())
+      .then(text => {
+        alert("✅ Форма отправлена: " + text);
+        form.reset();
+        guestDetails.innerHTML = '';
+        guestCountOptions.innerHTML = '';
+        submitBtn.disabled = true;
+      })
+      .catch(err => alert("❌ Ошибка отправки: " + err));
     }
 
-    fetch('https://script.google.com/macros/s/AKfycbyPpeoLWUwP8rElR-Cvxwr67xohzEnzlPAhpLD1_RuzraPUzsHK_Ndl9fP9NOIuXc8O8g/exec', {
-      method: 'POST',
-      body: JSON.stringify(formData)
-    })
-    .then(response => response.text())
-    .then(data => {
-      alert(data);
-      form.reset();
-      guestDetails.innerHTML = '';
-      guestCountOptions.innerHTML = '';
-      document.getElementById('not-coming').style.display = 'none';
-      document.getElementById('coming').style.display = 'none';
-      submitBtn.disabled = true;
-    })
-    .catch(error => {
-      console.error('Ошибка:', error);
-    });
+    if (attendance === 'yes') {
+      const guestCount = parseInt(formData.get('guest_count'));
+      const location = formData.get('location');
+      const rows = [];
+
+      for (let i = 1; i <= guestCount; i++) {
+        rows.push({
+          attendance: 'Придем',
+          guest_count: guestCount,
+          guest_fio: formData.get(`guest_${i}_fio`),
+          guest_alcohol: formData.get(`guest_${i}_alcohol`),
+          guest_allergy: formData.get(`guest_${i}_allergy`),
+          location: location
+        });
+      }
+
+      fetch('https://script.google.com/macros/s/AKfycbyPpeoLWUwP8rElR-Cvxwr67xohzEnzlPAhpLD1_RuzraPUzsHK_Ndl9fP9NOIuXc8O8g/exec', {
+        method: 'POST',
+        body: JSON.stringify({ guests: rows }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.text())
+      .then(text => {
+        alert("✅ Форма отправлена: " + text);
+        form.reset();
+        guestDetails.innerHTML = '';
+        guestCountOptions.innerHTML = '';
+        submitBtn.disabled = true;
+      })
+      .catch(err => alert("❌ Ошибка отправки: " + err));
+    }
   });
 </script>
-
 </body>
 </html>
