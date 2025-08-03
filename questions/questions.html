@@ -54,21 +54,13 @@
     attendanceRadios.forEach(radio => {
       radio.addEventListener('change', () => {
         const isComing = radio.value === 'yes';
-
-        // Переключение блоков
         attendanceBlock.classList.toggle('hidden', !isComing);
         nonAttendanceBlock.classList.toggle('hidden', isComing);
-
-        // Очистка полей
         guestFields.innerHTML = '';
         document.getElementById('city').value = '';
         document.getElementById('singleName').value = '';
-
-        // Установка required
         document.getElementById('singleName').required = !isComing;
         document.getElementById('city').required = isComing;
-
-        // Удаляем required у полей гостей
         document.querySelectorAll('[name^="fio"], [name^="alcohol"], [name^="allergy"]').forEach(el => {
           el.required = false;
         });
@@ -85,7 +77,6 @@
               <h4>Гость №${i}</h4>
               <label>ФИО:</label><br>
               <input type="text" name="fio${i}" required><br>
-
               <label>Какой алкоголь вы предпочитаете?</label><br>
               <select name="alcohol${i}">
                 <option>Красное вино</option>
@@ -94,7 +85,6 @@
                 <option>Самогон</option>
                 <option>Не пью алкоголь</option>
               </select><br>
-
               <label>Есть ли аллергия?<br><small>Укажите, у кого в семье аллергия и на какие продукты.</small></label><br>
               <input type="text" name="allergy${i}">
             </div>
@@ -105,15 +95,12 @@
 
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
-
-      const timestamp = new Date().toLocaleString('ru-RU');
       const participation = document.querySelector('input[name="attendance"]:checked').value;
 
       if (participation === 'no') {
         const fullName = document.getElementById('singleName').value;
         const data = {
           num: 1,
-          timestamp,
           participation: "Нет",
           fio: fullName,
           alcohol: '',
@@ -139,7 +126,6 @@
 
         const data = {
           num: i,
-          timestamp,
           participation: "Да",
           fio,
           alcohol,
@@ -158,7 +144,7 @@
     });
 
     async function sendToSheet(data) {
-      await fetch('https://script.google.com/macros/s/AKfycbyPpeoLWUwP8rElR-Cvxwr67xohzEnzlPAhpLD1_RuzraPUzsHK_Ndl9fP9NOIuXc8O8g/exec', {
+      await fetch('https://script.google.com/macros/s/ВАШ_URL_СКРИПТА/exec', {
         method: 'POST',
         body: JSON.stringify(data)
       });
